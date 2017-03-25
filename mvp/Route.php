@@ -1,14 +1,16 @@
 <?php
+
 class Route
 {
-	const CONTROLLERS = 'controllers/';
 	const MODELS = 'models/';
+	const VIEWS = 'views/';
+	const CONTROLLERS = 'controllers/';
 	
 	static function start()
 	{
 		// контроллер и действие по умолчанию
 		$controller_name = 'Main';
-		$action_name = 'index';
+		$action_name = 'action';
 		
 		// преобразовываем путь в массив путем разбиения пути на '/'
 		// http://php.net/manual/ru/function.explode.php
@@ -23,15 +25,14 @@ class Route
 		// добавляем префиксы
 		$model_name = 'Model_'.$controller_name;
 		$controller_name = 'Controller_'.$controller_name;
-		$action_name = 'action_'.$action_name;
 
 		// подцепляем файл с классом модели (файла модели может и не быть)
-		$model_file = strtolower($model_name).'.php';
+		$model_file = $model_name.'.php';
 		$model_path = self::MODELS.$model_file;
 		if(file_exists($model_path)) include self::MODELS.$model_file;
 
 		// подцепляем файл с классом контроллера
-		$controller_file = strtolower($controller_name).'.php';
+		$controller_file = $controller_name.'.php';
 		$controller_path = self::CONTROLLERS.$controller_file;
 		if(file_exists($controller_path)) include self::CONTROLLERS.$controller_file;
 		else
@@ -48,25 +49,17 @@ class Route
 		$controller = new $controller_name;
 		$action = $action_name;
 		
-		if(method_exists($controller, $action))
-		{
-			// вызываем действие контроллера
-			$controller->$action();
-		}
-		else
-		{
-			// здесь также разумнее было бы кинуть исключение
-			Route::ErrorPage404();
-		}
-	
+		// вызываем действие контроллера
+		if(method_exists($controller, $action)) $controller->$action();
+		else Route::ErrorPage404();
 	}
 	
+	/* Показываем страницу с ошибкой 404 и выходим */
 	static function ErrorPage404()
 	{
         $host = 'http://'.$_SERVER['HTTP_HOST'].'/';
         header('HTTP/1.1 404 Not Found');
 		header("Status: 404 Not Found");
-//		header('Location:'.$host.'404.html');
 		include '404.html';
     }
 }

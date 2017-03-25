@@ -1,0 +1,22 @@
+.wide {clear:both;}
+h1 {padding-top:16px;}
+
+.tab_name
+{
+	padding-right:20px;
+	font-style:italic;
+}
+.tab_name a
+{
+	color:#ff0000;
+}
+#tabs div 
+{
+	padding:0 16px 0 0;
+	float:left;
+	clear:none;
+}
+#list div
+{
+	
+}

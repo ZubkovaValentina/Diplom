@@ -16,7 +16,7 @@ class Route
 		
 		// контроллер и действие по умолчанию
 		$controller_name = 'main';
-		$action_name = 'action';
+		$action_name = 'all';
 		
 		// преобразовываем путь в массив путем разбиения пути на '/'
 		// http://php.net/manual/ru/function.explode.php

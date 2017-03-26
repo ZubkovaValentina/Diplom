@@ -2,12 +2,12 @@
 <?php
 
 
-foreach($model->getData() as $row) include 'list_item.html';
+foreach($model->getList() as $row) include 'list_item.html';
 
 
 ?>
 		</table>
-		<form method="POST" action="<?php echo '/'.$model->getType().'/'.Controller::ACTION_CREATE.'/';
+		<form method="GET" action="<?php echo '/'.$model->getType().'/'.Controller::ACTION_CREATE.'/';
 
 ?>
 ">

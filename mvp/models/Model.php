@@ -1,36 +1,20 @@
 <?php
 
-require_once '../Config.php';
-require_once '../log4php/Logger.php';
-
-abstract class Model
+class Model
 {
-	protected $db;
-	protected $log;
-	
-	function __construct()
+	protected $data = array();
+	/**
+	 * Используем «магический» метод __get() http://php.net/manual/ru/language.oop5.overloading.php
+	 */
+	function __set($name, $value)
 	{
-		Logger::configure('../log_config.xml');
-		$this->log = Logger::getLogger(__CLASS__);
-		
-		error_reporting(E_ALL & ~E_DEPRECATED);
-		$this->db = mysql_connect(Config::DB_HOST, Config::DB_USER, Config::DB_PWD);
-		mysql_select_db(Config::DB_NAME, $this->db);
-		
-		$this->log->debug("Test logger message");
+		$this->data[$name] = $value;
 	}
 	
-	function __destruct()
+	function __get($name)
 	{
-		mysql_close($this->db);
+		if(array_key_exists($name, $this->data)) return $this->data[$name];
+		/* @TODO: Записать в лог эту досадную неприятность */
+		return null;
 	}
-	
-	/** Возвращает тип модели (таблицы в БД) — client, employee, etc. */
-	abstract function getType();
-	/** Возврашает заголовок окна */
-	abstract function getTitle();
-	/** Возвращает название страницы */
-	abstract function getHeader();
-	/** Возвращает список модели (записи соответствующей таблицы БД) */
-	abstract function getData();
 }

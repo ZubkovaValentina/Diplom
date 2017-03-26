@@ -25,7 +25,12 @@ abstract class Model
 		mysql_close($this->db);
 	}
 	
+	/** Возвращает тип модели (таблицы в БД) — client, employee, etc. */
+	abstract function getType();
+	/** Возврашает заголовок окна */
 	abstract function getTitle();
+	/** Возвращает название страницы */
 	abstract function getHeader();
+	/** Возвращает список модели (записи соответствующей таблицы БД) */
 	abstract function getData();
 }

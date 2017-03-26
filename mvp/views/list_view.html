@@ -1,0 +1,8 @@
+<table id="list">
+<?php foreach($model->getData() as $row) include 'list_item.html'; ?>
+</table>
+<form method="POST" action="/<?php echo $model->getType(); ?>/create/">
+	<div style="margin-top:20px;">
+		<input type="submit" name="submit" value="Добавить" />
+	</div>
+</form>

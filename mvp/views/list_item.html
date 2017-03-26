@@ -1,0 +1,4 @@
+<tr>
+	<td class="tab_name"><a href="/<?php echo $model->getType(); ?>/delete/?<?php echo Controller::PARAM_KEY; ?>=<?php echo $row->key; ?>" onclick="return confirm('Точно удалить <?php echo $row->name; ?>?'); return false;">X</a></td>
+	<td><a href="/<?php echo $model->getType(); ?>/edit/?<?php echo Controller::PARAM_KEY; ?>=<?php echo $row->key; ?>"><?php echo $row->name; ?></a></td>
+</tr>

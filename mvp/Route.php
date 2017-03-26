@@ -15,7 +15,7 @@ class Route
 		$log = Logger::getLogger(__CLASS__);
 		
 		// контроллер и действие по умолчанию
-		$controller_name = 'Main';
+		$controller_name = 'main';
 		$action_name = 'action';
 		
 		// преобразовываем путь в массив путем разбиения пути на '/'
@@ -33,7 +33,7 @@ class Route
 		$controller_name = 'Controller_'.$controller_name;
 
 		// подцепляем файл с классом модели (файла модели может и не быть)
-		$model_file = $model_name.'.php';
+		$model_file = strtolower($model_name).'.php';
 		$model_path = self::MODELS.$model_file;
 		
 		$log->debug("controller_name=$controller_name");
@@ -42,11 +42,12 @@ class Route
 		if(file_exists($model_path)) include self::MODELS.$model_file;
 
 		// подцепляем файл с классом контроллера
-		$controller_file = $controller_name.'.php';
+		$controller_file = strtolower($controller_name).'.php';
 		$controller_path = self::CONTROLLERS.$controller_file;
 		if(file_exists($controller_path)) include self::CONTROLLERS.$controller_file;
 		else
 		{
+			$this->log->error("controller not found: $controller_path");
 			Route::ErrorPage404();
 			return;
 		}
@@ -57,7 +58,11 @@ class Route
 		
 		// вызываем действие контроллера
 		if(method_exists($controller, $action)) $controller->$action();
-		else Route::ErrorPage404();
+		else
+		{
+			$this->log->error("action not found: $action for controller: $controller_name");
+			Route::ErrorPage404();
+		}
 	}
 	
 	/* Показываем страницу с ошибкой 404 и выходим */

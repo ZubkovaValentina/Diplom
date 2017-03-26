@@ -15,11 +15,6 @@ class Controller_Client extends Controller
 		$this->view->generate('list_view.html', null, $this->model);
 	}
 	
-	function delete()
-	{
-		$key = $this->getKeyValue();
-	}
-	
 	function create()
 	{
 		$key = $this->getKeyValue();

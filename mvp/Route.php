@@ -37,10 +37,6 @@ class Route
 		if(file_exists($controller_path)) include self::CONTROLLERS.$controller_file;
 		else
 		{
-			/*
-			правильно было бы кинуть здесь исключение,
-			но для упрощения сразу сделаем редирект на страницу 404
-			*/
 			Route::ErrorPage404();
 			return;
 		}

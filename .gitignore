@@ -3,3 +3,4 @@ www/
 www-my/
 www-old/
 .DS_Store
+Config.php

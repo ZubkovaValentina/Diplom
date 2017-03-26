@@ -1,5 +1,8 @@
 <?php
 
+require_once '../Config.php';
+require_once '../log4php/Logger.php';
+
 class Route
 {
 	const MODELS = 'models/';

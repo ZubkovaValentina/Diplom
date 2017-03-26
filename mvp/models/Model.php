@@ -11,10 +11,12 @@ abstract class Model
 	function __construct()
 	{
 		Logger::configure('../log_config.xml');
-		$this->log = Logger::getLogger('myLogger');
+		$this->log = Logger::getLogger(__CLASS__);
+		
 		error_reporting(E_ALL & ~E_DEPRECATED);
 		$this->db = mysql_connect(Config::DB_HOST, Config::DB_USER, Config::DB_PWD);
 		mysql_select_db(Config::DB_NAME, $this->db);
+		
 		$this->log->debug("Test logger message");
 	}
 	

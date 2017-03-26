@@ -1,4 +1,7 @@
 RewriteEngine On
+# перенаправляем все пути на /index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+# кроме статических файлов — favicon.ico, robots.txt, css/, js/
+RewriteCond $1 !^(favicon\.ico|favicon\.png|media|robots\.txt|css|js)
 RewriteRule .* index.php [L]

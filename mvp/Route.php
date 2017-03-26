@@ -11,6 +11,9 @@ class Route
 	
 	static function start()
 	{
+		Logger::configure('../log_config.xml');
+		$log = Logger::getLogger(__CLASS__);
+		
 		// контроллер и действие по умолчанию
 		$controller_name = 'Main';
 		$action_name = 'action';
@@ -32,6 +35,10 @@ class Route
 		// подцепляем файл с классом модели (файла модели может и не быть)
 		$model_file = $model_name.'.php';
 		$model_path = self::MODELS.$model_file;
+		
+		$log->debug("controller_name=$controller_name");
+		$log->debug("action_name=$action_name");
+		
 		if(file_exists($model_path)) include self::MODELS.$model_file;
 
 		// подцепляем файл с классом контроллера

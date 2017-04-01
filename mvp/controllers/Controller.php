@@ -1,6 +1,7 @@
 <?php
 
 require_once 'views/View.php';
+require_once 'models/Row.php';
 require_once '../Config.php';
 require_once '../log4php/Logger.php';
 
@@ -67,23 +68,40 @@ abstract class Controller
 	abstract function getTitle();
 	/** Возвращает название страницы */
 	abstract function getHeader();
+	/** Возвращает название колонки с именем (то, что будет отображаться как название элемента списка) */
+	abstract function getNameColumn();
+	
+	function getModel()
+	{
+		return $this->model;
+	}
+	
+	/** Возвращает название колонки ключа */
+	function getKeyColumn()
+	{
+		return 'key_'.$this->getType();
+	}
+
 
 	/**
 		Вызывается для URI вида: /{my_type}/
 		Выдергивает записи из соответствующей таблицы {my_type}
 	*/
+	
 	function all()
 	{
-		$all = array();
-		$sql = "SELECT * FROM `".$this->getType()."`";
+		$list_of_items = array(); /* массив объектов Row */
+		$sql = "SELECT ".$this->getKeyColumn().", ".$this->getNameColumn()." FROM `".$this->getType()."`";
 		$this->log->debug("Get model list: ".$sql);
 		if($result = $this->db->query($sql))
 		{
 			/* извлечение ассоциативного массива */
-			while($row = $result->fetch_assoc()) $all[] = $row;
+			while($row = $result->fetch_row()) $list_of_items[] = new Row($row[0], $row[1]);
 			/* удаление выборки */
 			$result->free();
-			return $all;
+			
+			$this->model->__set('list', $list_of_items);
+			$this->view->generate('list_view.html', null, $this);
 		}
 		else
 		{
@@ -101,10 +119,10 @@ abstract class Controller
 	function delete()
 	{
 		$key = $this->getKeyValue();
-		$sql = "DELETE FROM `".$this->model->getType()."` WHERE `key_".$this->model->getType()."`=".$key;
+		$sql = "DELETE FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
 		mysql_query($sql) or die(mysql_error());
 		/* Редирект на список текущего типа {my_type} */
-		header('Location: /'.$this->model->getType().'/');
+		header('Location: /'.$this->getType().'/');
 	}
 	
 	/**

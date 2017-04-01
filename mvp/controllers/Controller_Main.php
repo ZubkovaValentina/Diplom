@@ -10,28 +10,49 @@ class Controller_Main extends Controller
 		parent::__construct(new Model());
 	}
 	
+	/** @Override */
 	function getTitle()
 	{
 		return 'Дипломный проект Валентины Зубковой';
 	}
 	
+	/** @Override */
 	function getHeader()
 	{
 		return 'Диспетчер';
 	}
 	
+	/** @Override */
 	function getStringRepresentation()
 	{
 		return null;
 	}
 	
+	/** @Override */
 	function getType()
 	{
 		return null;
 	}
 	
+	/** @Override */
+	function getKeyColumn()
+	{
+		return null;
+	}
+	
+	/** @Override */
+	function getNameColumn()
+	{
+		return null;
+	}
+	
+	/** @Override */
 	function all()
 	{
 		$this->view->generate('main_view.html', null, $this);
 	}
+	
+	function delete() {}
+	function create() {}
+	function edit() {}
 }

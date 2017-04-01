@@ -15,6 +15,7 @@ class Controller_Client extends Controller
 	
 	function action()
 	{
+		$this->log->debug("wefweferfg");
 		$this->view->generate('list_view.html', null, $this->getList());
 	}
 	
@@ -30,9 +31,8 @@ class Controller_Client extends Controller
 		/* GET-запрос. Выводим пустую форму. */
 		else
 		{
-			$this->view->generate('client_view.html', null, $this->model);
+			$this->view->generate('client_view.html', null, $this);
 		}
-		
 	}
 	
 	function edit()
@@ -48,6 +48,18 @@ class Controller_Client extends Controller
 	function getType()
 	{
 		return self::TYPE_NAME;
+	}
+	
+	/** @Override */
+	function getKeyColumn()
+	{
+		return 'key_client';
+	}
+	
+	/** @Override */
+	function getNameColumn()
+	{
+		return 'full_name';
 	}
 	
 	function getTitle()

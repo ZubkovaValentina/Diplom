@@ -44,10 +44,10 @@ class Route
 		// подцепляем файл с классом контроллера
 		$controller_file = strtolower($controller_name).'.php';
 		$controller_path = self::CONTROLLERS.$controller_file;
-		if(file_exists($controller_path)) include self::CONTROLLERS.$controller_file;
+		if(file_exists($controller_path)) include $controller_path;
 		else
 		{
-			$this->log->error("controller not found: $controller_path");
+			$log->error("controller not found: $controller_path");
 			Route::ErrorPage404();
 			return;
 		}
@@ -56,11 +56,13 @@ class Route
 		$controller = new $controller_name;
 		$action = $action_name;
 		
+		
+		
 		// вызываем действие контроллера
 		if(method_exists($controller, $action)) $controller->$action();
 		else
 		{
-			$this->log->error("action not found: $action for controller: $controller_name");
+			$log->error("action not found: $action for controller: $controller_name");
 			Route::ErrorPage404();
 		}
 	}

@@ -3,8 +3,6 @@
 <?php
 
 
-
-
 /*
 Формируем строку вида:
 <a href="/{my_type}/delete/?key={my_key_value}" onclick="return confirm('Точно удалить {name}?'); return false;">X</a>
@@ -13,7 +11,7 @@
 <a href="/client/delete/?key=567" onclick="return confirm('Точно удалить {какое-то имя клиента}?'); return false;">X</a>
 */
 echo '					';
-echo '<a href="/'.$model->getType().'/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row->key.'" onclick="return confirm(\'Точно удалить '.$row->name.'?\'); return false;">X</a>
+echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row->getKey().'" onclick="return confirm(\'Точно удалить '.$row->getName().'?\'); return false;">X</a>
 ';
 
 
@@ -31,7 +29,7 @@ echo '<a href="/'.$model->getType().'/'.Controller::ACTION_DELETE.'/?'.Controlle
 Формируем строку вида:
 */
 echo '					';
-echo '<a href="/'.$model->getType().'/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row->key.'">'.$row->name.'</a>
+echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row->getKey().'">'.$row->getName().'</a>
 ';
 
 

@@ -1,13 +1,11 @@
 		<table id="list">
 <?php
 
-
-foreach($model->getList() as $row) include 'list_item.html';
-
+foreach($controller->getModel()->__get('list') as $row) include "list_item.html";
 
 ?>
 		</table>
-		<form method="GET" action="<?php echo '/'.$model->getType().'/'.Controller::ACTION_CREATE.'/';
+		<form method="GET" action="<?php echo '/'.$controller->getType().'/'.Controller::ACTION_CREATE.'/';
 
 ?>
 ">

@@ -73,40 +73,37 @@ class Controller_Client extends Controller
 		$this->model = new Model();
 		
 		$error = false;
-		$series_p = '';
-		$mobile_phone = '';
-		$address = '';
-		$full_name = '';
-		
 		if(empty($_POST['series_p'])) $error = 'Серия/номер паспорта';
 		if(empty($_POST['mobile_phone'])) $error = 'Телефон';
 		if(empty($_POST['address'])) $error = 'Адрес';
 		if(empty($_POST['full_name'])) $error = 'ФИО сотрудника';
 		
-		$series_p = $this->db->real_escape_string($_POST['series_p']);
-		$mobile_phone = $this->db->real_escape_string($_POST['mobile_phone']);
-		$address = $this->db->real_escape_string($_POST['address']);
-		$full_name = $this->db->real_escape_string($_POST['full_name']);
+		$record = array();
+		$record['series_p'] = $this->db->real_escape_string($_POST['series_p']);
+		$record['mobile_phone'] = $this->db->real_escape_string($_POST['mobile_phone']);
+		$record['address'] = $this->db->real_escape_string($_POST['address']);
+		$record['full_name'] = $this->db->real_escape_string($_POST['full_name']);
 		
 		$key = $this->getKeyValue();
 		
 		if(!$error)
 		{
-			$sql = "UPDATE `".$this->getType()."` SET `full_name`='$full_name', `address`='$address', `mobile_phone`=$mobile_phone, `series_p`=$series_p WHERE `".$this->getKeyColumn()."`=$key";
+			$sql = "UPDATE `".$this->getType()."` SET 
+						`full_name`='".$record['full_name']."', 
+						`address`='".$record['address']."',
+						`mobile_phone`=".$record['mobile_phone'].", 
+						`series_p`=".$record['series_p']."
+						WHERE `".$this->getKeyColumn()."`=$key";
+				
 			$this->log->debug("update SQL: $sql");
 			$this->db->query($sql);
 			/* Редирект на список текущего типа {my_type} */
-			$redirect = 'Location: /'.$this->getType().'/';
-			header($redirect);
+			header('Location: /'.$this->getType().'/');
 			exit(0);
 		}
 		$this->model->__set('error', $error);
 		
 		$record['key_client'] = $key;
-		$record['full_name'] = $full_name;
-		$record['address'] = $address;
-		$record['mobile_phone'] = $mobile_phone;
-		$record['series_p'] = $series_p;
 		$this->model->__set('record', $record);
 		
 		$this->view->generate('client_edit.html', null, $this);

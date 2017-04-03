@@ -120,9 +120,12 @@ abstract class Controller
 	{
 		$key = $this->getKeyValue();
 		$sql = "DELETE FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
-		mysql_query($sql) or die(mysql_error());
+		$this->log->debug("delete SQL: $sql");
+		$this->db->query($sql);
+		$redirect = 'Location: /'.$this->getType().'/';
 		/* Редирект на список текущего типа {my_type} */
-		header('Location: /'.$this->getType().'/');
+		header($redirect);
+		exit(0);
 	}
 	
 	/**

@@ -1,0 +1,54 @@
+<?php
+
+$key = $controller->getModel()->__get('record')['key_client'];
+$full_name = $controller->getModel()->__get('record')['full_name'];
+$address = $controller->getModel()->__get('record')['address'];
+$mobile_phone = $controller->getModel()->__get('record')['mobile_phone'];
+$series_p = $controller->getModel()->__get('record')['series_p'];
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$error = $controller->getModel()->__get('error');
+
+echo "<br />";
+if(!$is_edit) echo "<h3>Добавить клиента</h3>";
+else echo "<h3>Редактировать клиента</h3>";
+echo '
+		<form method="POST" action="/client/save/">
+			<table td="tab">
+				<tr>
+					<td class="tab_name">ФИО</td>
+					<td><input type="text" name="full_name" value="'.$full_name.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Адрес</td>
+					<td><input type="text" name="address" value="'.$address.'" /></td>
+				</tr>
+				
+				<tr>
+					<td class="tab_name">Телефон</td>
+					<td><input type="text" name="mobile_phone" value="'.$mobile_phone.'" /></td>
+				</tr>
+				
+				<tr>
+					<td class="tab_name">Серия/номер паспорта</td>
+					<td><input type="text" name="series_p" value="'.$series_p.'" /></td>
+				</tr>';
+if(!empty($error)) echo '
+				<tr>
+					<td colspan="2" class="error">Не заполнено обязательное поле "'.$error.'"!</td>
+				</tr>';
+echo '
+				<tr>
+					<td colspan="2" align="center" style="padding-top:20px;">
+						<input type="submit" name="submit" value="';
+if(!$is_edit) echo "Добавить";
+else echo "Сохранить";
+echo '" />';
+if($is_edit) echo '<input type="hidden" name="key" value="'.$key.'" />';
+echo '
+					</td>
+				</tr>
+			</table>
+		</form>';

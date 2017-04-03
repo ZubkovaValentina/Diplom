@@ -95,7 +95,7 @@ abstract class Controller
 		$this->log->debug("Get model list: ".$sql);
 		if($result = $this->db->query($sql))
 		{
-			/* извлечение ассоциативного массива */
+			/* извлечение индексного массива */
 			while($row = $result->fetch_row()) $list_of_items[] = new Row($row[0], $row[1]);
 			/* удаление выборки */
 			$result->free();
@@ -136,14 +136,18 @@ abstract class Controller
 	abstract function create();
 		
 	/** 
-	 * Редактирование записи. Если GET — создаем форму, заполненную значениями из БД.
+	 * Редактирование записи. Создаем форму, заполненную значениями из БД.
 	 * Ключ выборки берется из GET-запроса $_GET['key']:
 	 * SELECT … FROM `{my_type}` WHERE `key_{my_type}`=$key
-	 *
-	 * Если POST — сохраняем запись в БД:
-	 * UPDATE `{my_type}`
 	 */
 	abstract function edit();
+	
+	/**
+	 * Сохраняем запись в БД:
+	 * UPDATE `{my_type}` или INSERT
+	 * Если в запросе есть параметр «key», то делаем UPDATE, иначе делаем INSERT
+	 */
+	abstract function save();
 	
 	/** Возвращает название ключа в БД для таблицы {my_type} */
 	function getKeyName()

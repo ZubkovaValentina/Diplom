@@ -1,12 +1,12 @@
 <?php
 
+$is_edit = $controller->getModel()->__get('is_edit');
+
 $key = $controller->getModel()->__get('record')['key_client'];
 $full_name = $controller->getModel()->__get('record')['full_name'];
 $address = $controller->getModel()->__get('record')['address'];
 $mobile_phone = $controller->getModel()->__get('record')['mobile_phone'];
 $series_p = $controller->getModel()->__get('record')['series_p'];
-
-$is_edit = $controller->getModel()->__get('is_edit');
 
 $error = $controller->getModel()->__get('error');
 

@@ -5,11 +5,11 @@ foreach($controller->getModel()->__get('list') as $row) include "list_item.html"
 
 ?>
 		</table>
-		<form method="GET" action="<?php echo '/'.$controller->getType().'/'.Controller::ACTION_CREATE.'/';
+		<form method="GET" action="<?php echo '/'.$controller->getType().'/'.Controller::ACTION_EDIT.'/';
 
 ?>
 ">
 			<div style="margin-top:20px;">
-				<input type="submit" name="submit" value="Добавить" />
+				<input type="submit" value="Добавить" />
 			</div>
 		</form>

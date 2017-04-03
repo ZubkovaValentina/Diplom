@@ -40,29 +40,45 @@ class Controller_Client extends Controller
 	 */
 	function edit()
 	{
+		$this->model = new Model();
 		$key = $this->getKeyValue();
-		$sql = "SELECT * FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
-		if($result = $this->db->query($sql))
+		/* В запросе указан key — значит это редактирование */
+		if($key)
 		{
-			$this->model = new Model();
-			/* извлечение ассоциативного массива */
-			$row = $result->fetch_assoc();
-			if($row === null)
-			{
-				echo "Ошибка! Запись с ключом $key не найдена в таблице «".$this->getType()."»";
-				exit(0);
-			}
-			$this->model->__set("record", $row);
 			$this->model->__set("is_edit", true);
-			/* удаление выборки */
-			$result->free();
-			$this->view->generate('client_edit.html', null, $this);
+			$sql = "SELECT * FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
+			if($result = $this->db->query($sql))
+			{
+			
+				/* извлечение ассоциативного массива */
+				$row = $result->fetch_assoc();
+				if($row === null)
+				{
+					echo "Ошибка! Запись с ключом $key не найдена в таблице «".$this->getType()."»";
+					exit(0);
+				}
+			
+				/* удаление выборки */
+				$result->free();
+			}
+			else
+			{
+				$this->log->error("Ошибка SQL: ".$this->db->error);
+				return null;
+			}
 		}
 		else
 		{
-			$this->log->error("Ошибка SQL: ".$this->db->error);
-			return null;
+			$row = array();
+			$row['key_client'] = '';
+			$row['full_name'] = '';
+			$row['address'] = '';
+			$row['mobile_phone'] = '';
+			$row['series_p'] = '';
+			$this->model->__set("is_edit", false);
 		}
+		$this->model->__set("record", $row);
+		$this->view->generate('client_edit.html', null, $this);
 	}
 	
 	/**
@@ -85,15 +101,28 @@ class Controller_Client extends Controller
 		$record['full_name'] = $this->db->real_escape_string($_POST['full_name']);
 		
 		$key = $this->getKeyValue();
+		$this->model->__set("is_edit", $key);
 		
 		if(!$error)
 		{
-			$sql = "UPDATE `".$this->getType()."` SET 
+			if($key)
+			{
+				$sql = "UPDATE `".$this->getType()."` SET 
 						`full_name`='".$record['full_name']."', 
 						`address`='".$record['address']."',
 						`mobile_phone`=".$record['mobile_phone'].", 
 						`series_p`=".$record['series_p']."
 						WHERE `".$this->getKeyColumn()."`=$key";
+			}
+			else
+			{
+				$sql = "INSERT INTO `".$this->getType()."`(
+					`full_name`, `address`, `mobile_phone`, `series_p`) VALUES(
+					'".$record['full_name']."',
+					'".$record['address']."',
+					".$record['mobile_phone'].",
+					".$record['series_p'].")";
+			}
 				
 			$this->log->debug("update SQL: $sql");
 			$this->db->query($sql);

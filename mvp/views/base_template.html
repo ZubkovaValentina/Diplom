@@ -17,6 +17,39 @@
 			<div><a href="/couple_goods.html">Счет</a></div>
 			<div><a href="/invoice.html">Накладная</a></div>
 		</div>
+		
+		
+<?php		
+$sql = "SELECT `key_employee`, `full_name` FROM `employee` WHERE DAY(`birthday`) = DAY(CURDATE()) AND MONTH(`birthday`) = MONTH(CURDATE())";
+
+$db = new mysqli(Config::DB_HOST, Config::DB_USER, Config::DB_PWD, Config::DB_NAME);
+if($result = $db->query($sql))
+$employee_count = $result->num_rows;
+
+if($employee_count > 0)
+{
+	echo '
+<div style="clear:both;">
+	<div style="clear:none; float:left; padding:10px; background-color:#ffff00;">Сегодня день рождение у: ';
+	
+	for($i = 0; $i < $employee_count; ++$i)
+	{
+		list($key_employee, $full_name) = $result->fetch_row();
+		echo '<a href="/employee/edit/?key='.$key_employee.'">'.$full_name.'</a>';
+		if($i < ($employee_count-1)) echo ',&nbsp;';
+	}
+	
+	echo '</div>
+</div>';
+}
+$result->free();
+$db->close();
+?>
+		
+		
+		
+		
+		
 		<h1 class="wide"><?php echo $controller->getHeader(); ?></h1>
 		<?php include Route::VIEWS.$content_view; ?>
 	</body>

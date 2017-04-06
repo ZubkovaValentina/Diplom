@@ -15,9 +15,26 @@ class Controller_Client extends Controller
 	
 	function action()
 	{
+		$this->log->debug("wefweferfg");
 		$this->view->generate('list_view.html', null, $this->getList());
 	}
 	
+	function create()
+	{
+		/*
+		POST-запрос. Проверяем поля формы и, если все ОК,
+		то добавляем в БД. Иначе выводим ошибку.	
+		*/
+		if(isset($_POST['submit']))
+		{
+		}
+		/* GET-запрос. Выводим пустую форму. */
+		else
+		{
+			$this->view->generate('client_view.html', null, $this);
+		}
+	}
+
 	/**
 	 * @Override
 	 */
@@ -61,7 +78,7 @@ class Controller_Client extends Controller
 			$this->model->__set("is_edit", false);
 		}
 		$this->model->__set("record", $row);
-		$this->view->generate($this->getType().'_edit.html', null, $this);
+		$this->view->generate('client_edit.html', null, $this);
 	}
 	
 	/**
@@ -75,7 +92,7 @@ class Controller_Client extends Controller
 		if(empty($_POST['series_p'])) $error = 'Серия/номер паспорта';
 		if(empty($_POST['mobile_phone'])) $error = 'Телефон';
 		if(empty($_POST['address'])) $error = 'Адрес';
-		if(empty($_POST['full_name'])) $error = 'ФИО клиента';
+		if(empty($_POST['full_name'])) $error = 'ФИО сотрудника';
 		
 		$record = array();
 		$record['series_p'] = $this->db->real_escape_string($_POST['series_p']);
@@ -115,10 +132,10 @@ class Controller_Client extends Controller
 		}
 		$this->model->__set('error', $error);
 		
-		$record['key_'.$this->getType()] = $key;
+		$record['key_client'] = $key;
 		$this->model->__set('record', $record);
 		
-		$this->view->generate($this->getType().'_edit.html', null, $this);
+		$this->view->generate('client_edit.html', null, $this);
 	}
 	
 	function getStringRepresentation()

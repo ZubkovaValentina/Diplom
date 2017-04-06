@@ -52,7 +52,19 @@ class Controller_Main extends Controller
 		$this->view->generate('main_view.html', null, $this);
 	}
 	
+	/** @Override */
 	function delete() {}
-	function create() {}
+	
+	
+	/** @Override */
 	function edit() {}
+	
+	/** @Override */
+	function save() {}
+	
+	/** @Override */
+	function create() {}
+	
+	/** @Override */
+//	public function edit() {}
 }

@@ -1,0 +1,84 @@
+<?php
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$key = $controller->getModel()->__get('record')['key_employee'];
+$full_name = $controller->getModel()->__get('record')['full_name'];
+$INN = $controller->getModel()->__get('record')['INN'];
+$position = $controller->getModel()->__get('record')['position'];
+$birthday = $controller->getModel()->__get('record')['birthday'];
+$children = $controller->getModel()->__get('record')['children'];
+$education = $controller->getModel()->__get('record')['education'];
+$sex = $controller->getModel()->__get('record')['sex'];
+
+$error = $controller->getModel()->__get('error');
+
+echo "<br />";
+if(!$is_edit) echo "<h3>Добавить сотрудника</h3>";
+else echo "<h3>Редактировать сотрудника</h3>";
+echo '
+		<form method="POST" action="/employee/save/">
+			<table td="tab">
+				<tr>
+					<td class="tab_name">ФИО</td>
+					<td><input type="text" name="full_name" value="'.$full_name.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">ИНН</td>
+					<td><input type="text" name="INN" value="'.$INN.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Должность</td>
+					<td><input type="text" name="position" value="'.$position.'" /></td>
+				</tr>
+
+				<tr>
+					<td  class="tab_name">Дата рождения</td>
+					<td><input type="text" name="birthday" value="'.$birthday.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Кол-во детей</td>
+					<td><input type="text" name="children" value="'.$children.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Образование</td>
+					<td><input type="text" name="education" value="'.$education.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Пол</td>
+					<td>
+						<select name="sex[]" size="2">
+							<option value="0"';
+if(!$sex) echo ' selected="selected"';
+echo '
+							>М</option>
+							<option value="1"';
+if($sex) echo ' selected="selected"';
+echo '
+							>Ж</option>
+						</select>
+					</td>
+				</tr>';
+				
+if(!empty($error)) echo '
+				<tr>
+					<td colspan="2" class="error">Не заполнено обязательное поле "'.$error.'"!</td>
+				</tr>';
+echo '
+				<tr>
+					<td colspan="2" align="center" style="padding-top:20px;">
+						<input type="submit" name="submit" value="';
+if(!$is_edit) echo "Добавить";
+else echo "Сохранить";
+echo '" />';
+if($is_edit) echo '<input type="hidden" name="key" value="'.$key.'" />';
+echo '
+					</td>
+				</tr>
+			</table>
+		</form>';

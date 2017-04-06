@@ -1,40 +1,23 @@
 <?php
 
 require_once 'controllers/Controller.php';
-require_once 'models/model_client.php';
+require_once 'models/model_employee.php';
 
-class Controller_Client extends Controller
+class Controller_Employee extends Controller
 {
-	const TYPE_NAME = 'client';
+	const TYPE_NAME = 'employee';
 	const COL_FULL_NAME = 'full_name';
 	
 	function __construct()
 	{
-		parent::__construct(new Model_Client());
+		parent::__construct(new Model_Employee());
 	}
 	
 	function action()
 	{
-		$this->log->debug("wefweferfg");
 		$this->view->generate('list_view.html', null, $this->getList());
 	}
 	
-	function create()
-	{
-		/*
-		POST-запрос. Проверяем поля формы и, если все ОК,
-		то добавляем в БД. Иначе выводим ошибку.	
-		*/
-		if(isset($_POST['submit']))
-		{
-		}
-		/* GET-запрос. Выводим пустую форму. */
-		else
-		{
-			$this->view->generate('client_view.html', null, $this);
-		}
-	}
-
 	/**
 	 * @Override
 	 */
@@ -70,15 +53,18 @@ class Controller_Client extends Controller
 		else
 		{
 			$row = array();
-			$row['key_client'] = '';
+			$row['key_'.$this->getType()] = '';
 			$row['full_name'] = '';
-			$row['address'] = '';
-			$row['mobile_phone'] = '';
-			$row['series_p'] = '';
+			$row['INN'] = '';
+			$row['position'] = '';
+			$row['birthday'] = '';
+			$row['children'] = '';
+			$row['education'] = '';
+			$row['sex'] = '';
 			$this->model->__set("is_edit", false);
 		}
 		$this->model->__set("record", $row);
-		$this->view->generate('client_edit.html', null, $this);
+		$this->view->generate($this->getType().'_edit.html', null, $this);
 	}
 	
 	/**
@@ -89,15 +75,22 @@ class Controller_Client extends Controller
 		$this->model = new Model();
 		
 		$error = false;
-		if(empty($_POST['series_p'])) $error = 'Серия/номер паспорта';
-		if(empty($_POST['mobile_phone'])) $error = 'Телефон';
-		if(empty($_POST['address'])) $error = 'Адрес';
+		if(empty($_POST['education'])) $error = 'Образование';
+//		if(empty($_POST['children'])) $error = 'Кол-во детей';
+		if(empty($_POST['birthday'])) $error = 'Дата рождения';
+		if(empty($_POST['position'])) $error = 'Должность';
+		if(empty($_POST['INN'])) $error = 'ИНН';
 		if(empty($_POST['full_name'])) $error = 'ФИО сотрудника';
 		
 		$record = array();
-		$record['series_p'] = $this->db->real_escape_string($_POST['series_p']);
-		$record['mobile_phone'] = $this->db->real_escape_string($_POST['mobile_phone']);
-		$record['address'] = $this->db->real_escape_string($_POST['address']);
+		if(isset($_POST['sex'])) $record['sex'] = $_POST['sex'][0];
+		else $record['sex'] = 0;
+		$record['education'] = $this->db->real_escape_string($_POST['education']);
+		if(empty($_POST['children'])) $record['children'] = 0;
+		else $record['children'] = $this->db->real_escape_string($_POST['children']);
+		$record['birthday'] = $this->db->real_escape_string($_POST['birthday']);
+		$record['position'] = $this->db->real_escape_string($_POST['position']);
+		$record['INN'] = $this->db->real_escape_string($_POST['INN']);
 		$record['full_name'] = $this->db->real_escape_string($_POST['full_name']);
 		
 		$key = $this->getKeyValue();
@@ -109,19 +102,25 @@ class Controller_Client extends Controller
 			{
 				$sql = "UPDATE `".$this->getType()."` SET 
 						`full_name`='".$record['full_name']."', 
-						`address`='".$record['address']."',
-						`mobile_phone`=".$record['mobile_phone'].", 
-						`series_p`=".$record['series_p']."
+						`INN`='".$record['INN']."',
+						`position`='".$record['position']."',
+						`birthday`='".$record['birthday']."',
+						`children`=".$record['children'].",
+						`education`='".$record['education']."',
+						`sex`=".$record['sex']."
 						WHERE `".$this->getKeyColumn()."`=$key";
 			}
 			else
 			{
 				$sql = "INSERT INTO `".$this->getType()."`(
-					`full_name`, `address`, `mobile_phone`, `series_p`) VALUES(
+					`full_name`, `INN`, `position`, `birthday`, `children`, `education`, `sex`) VALUES(
 					'".$record['full_name']."',
-					'".$record['address']."',
-					".$record['mobile_phone'].",
-					".$record['series_p'].")";
+					'".$record['INN']."',
+					'".$record['position']."',
+					'".$record['birthday']."',
+					'".$record['children']."',
+					'".$record['education']."',
+					".$record['sex'].")";
 			}
 				
 			$this->log->debug("update SQL: $sql");
@@ -132,10 +131,10 @@ class Controller_Client extends Controller
 		}
 		$this->model->__set('error', $error);
 		
-		$record['key_client'] = $key;
+		$record['key_'.$this->getType()] = $key;
 		$this->model->__set('record', $record);
 		
-		$this->view->generate('client_edit.html', null, $this);
+		$this->view->generate($this->getType().'_edit.html', null, $this);
 	}
 	
 	function getStringRepresentation()
@@ -151,7 +150,7 @@ class Controller_Client extends Controller
 	/** @Override */
 	function getKeyColumn()
 	{
-		return 'key_client';
+		return 'key_'.$this->getType();
 	}
 	
 	/** @Override */
@@ -162,11 +161,11 @@ class Controller_Client extends Controller
 	
 	function getTitle()
 	{
-		return 'Информация о клиенте';
+		return 'Информация о сотруднике';
 	}
 	
 	function getHeader()
 	{
-		return 'Список клиентов';
+		return 'Список сотрудников';
 	}
 }

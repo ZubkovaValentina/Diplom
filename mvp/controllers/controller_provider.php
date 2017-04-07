@@ -1,16 +1,16 @@
 <?php
 
 require_once 'controllers/Controller.php';
-require_once 'models/model_client.php';
+require_once 'models/Model.php';
 
-class Controller_Client extends Controller
+class Controller_Provider extends Controller
 {
-	const TYPE_NAME = 'client';
-	const COL_FULL_NAME = 'full_name';
+	const TYPE_NAME = 'provider';
+	const COL_FULL_NAME = 'name_organization';
 	
 	function __construct()
 	{
-		parent::__construct(new Model_Client());
+		parent::__construct(new Model());
 	}
 	
 	function action()
@@ -52,11 +52,12 @@ class Controller_Client extends Controller
 		else
 		{
 			$row = array();
-			$row['key_client'] = '';
-			$row['full_name'] = '';
-			$row['address'] = '';
+			$row['key_'.$this->getType()] = '';
+			$row['name_organization'] = '';
+			$row['provider_address'] = '';
 			$row['mobile_phone'] = '';
-			$row['series_p'] = '';
+			$row['fax'] = '';
+			$row['INN'] = '';
 			$this->model->__set("is_edit", false);
 		}
 		$this->model->__set("record", $row);
@@ -71,16 +72,18 @@ class Controller_Client extends Controller
 		$this->model = new Model();
 		
 		$error = false;
-		if(empty($_POST['series_p'])) $error = 'Серия/номер паспорта';
-		if(empty($_POST['mobile_phone'])) $error = 'Телефон';
-		if(empty($_POST['address'])) $error = 'Адрес';
-		if(empty($_POST['full_name'])) $error = 'ФИО клиента';
+		if(empty($_POST['INN'])) $error = 'ИНН';
+		if(empty($_POST['fax'])) $error = 'Факс';
+		if(empty($_POST['mobile_phone'])) $error = 'Номер телефона';
+		if(empty($_POST['provider_address'])) $error = 'Адрес';
+		if(empty($_POST['name_organization'])) $error = 'Название поставщика';
 		
 		$record = array();
-		$record['series_p'] = $this->db->real_escape_string($_POST['series_p']);
+		$record['name_organization'] = $this->db->real_escape_string($_POST['name_organization']);
+		$record['provider_address'] = $this->db->real_escape_string($_POST['provider_address']);
 		$record['mobile_phone'] = $this->db->real_escape_string($_POST['mobile_phone']);
-		$record['address'] = $this->db->real_escape_string($_POST['address']);
-		$record['full_name'] = $this->db->real_escape_string($_POST['full_name']);
+		$record['fax'] = $this->db->real_escape_string($_POST['fax']);
+		$record['INN'] = $this->db->real_escape_string($_POST['INN']);
 		
 		$key = $this->getKeyValue();
 		$this->model->__set("is_edit", $key);
@@ -90,20 +93,22 @@ class Controller_Client extends Controller
 			if($key)
 			{
 				$sql = "UPDATE `".$this->getType()."` SET 
-						`full_name`='".$record['full_name']."', 
-						`address`='".$record['address']."',
-						`mobile_phone`=".$record['mobile_phone'].", 
-						`series_p`=".$record['series_p']."
+						`name_organization`='".$record['name_organization']."',
+						`provider_address`='".$record['provider_address']."',
+						`mobile_phone`=".$record['mobile_phone'].",
+						`fax`=".$record['fax'].",
+						`INN`=".$record['INN']."
 						WHERE `".$this->getKeyColumn()."`=$key";
 			}
 			else
 			{
 				$sql = "INSERT INTO `".$this->getType()."`(
-					`full_name`, `address`, `mobile_phone`, `series_p`) VALUES(
-					'".$record['full_name']."',
-					'".$record['address']."',
+					`name_organization`, `provider_address`, `mobile_phone`, `fax`, `INN`) VALUES(
+					'".$record['name_organization']."',
+					'".$record['provider_address']."',
 					".$record['mobile_phone'].",
-					".$record['series_p'].")";
+					".$record['fax'].",
+					".$record['INN'].")";
 			}
 				
 			$this->log->debug("update SQL: $sql");
@@ -133,22 +138,22 @@ class Controller_Client extends Controller
 	/** @Override */
 	function getKeyColumn()
 	{
-		return 'key_client';
+		return 'key_'.$this->getType();
 	}
 	
 	/** @Override */
 	function getNameColumn()
 	{
-		return 'full_name';
+		return Controller_Provider::COL_FULL_NAME;
 	}
 	
 	function getTitle()
 	{
-		return 'Информация о клиенте';
+		return 'Информация о поставщике';
 	}
 	
 	function getHeader()
 	{
-		return 'Список клиентов';
+		return 'Список поставщиков';
 	}
 }

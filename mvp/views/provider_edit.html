@@ -1,0 +1,61 @@
+<?php
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$key = $controller->getModel()->__get('record')['key_provider'];
+$full_name = $controller->getModel()->__get('record')['name_organization'];
+$address = $controller->getModel()->__get('record')['provider_address'];
+$mobile_phone = $controller->getModel()->__get('record')['mobile_phone'];
+$fax = $controller->getModel()->__get('record')['fax'];
+$INN = $controller->getModel()->__get('record')['INN'];
+
+$error = $controller->getModel()->__get('error');
+
+echo "<br />";
+if(!$is_edit) echo "<h3>Добавить поставщика</h3>";
+else echo "<h3>Редактировать поставщика</h3>";
+echo '
+		<form method="POST" action="/provider/save/">
+			<table td="tab">
+				<tr>
+					<td class="tab_name">Название поставщика</td>
+					<td><input type="text" name="name_organization" value="'.htmlentities($full_name).'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Адрес</td>
+					<td><input type="text" name="provider_address" value="'.htmlentities($address).'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Номер телефона</td>
+					<td><input type="text" name="mobile_phone" value="'.$mobile_phone.'" /></td>
+				</tr>
+
+				<tr>
+					<td  class="tab_name">Факс</td>
+					<td><input type="text" name="fax" value="'.$fax.'" /></td>
+				</tr>
+
+				<tr>
+					<td  class="tab_name">ИНН</td>
+					<td><input type="text" name="INN" value="'.$INN.'" /></td>
+				</tr>';
+				
+if(!empty($error)) echo '
+				<tr>
+					<td colspan="2" class="error">Не заполнено обязательное поле "'.$error.'"!</td>
+				</tr>';
+echo '
+				<tr>
+					<td colspan="2" align="center" style="padding-top:20px;">
+						<input type="submit" name="submit" value="';
+if(!$is_edit) echo "Добавить";
+else echo "Сохранить";
+echo '" />';
+if($is_edit) echo '<input type="hidden" name="key" value="'.$key.'" />';
+echo '
+					</td>
+				</tr>
+			</table>
+		</form>';

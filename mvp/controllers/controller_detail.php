@@ -1,6 +1,7 @@
 <?php
 
 require_once 'controllers/Controller.php';
+require_once 'controllers/controller_provider.php';
 require_once 'models/Model.php';
 
 class Controller_Detail extends Controller
@@ -18,6 +19,42 @@ class Controller_Detail extends Controller
 		$this->view->generate('list_view.html', null, $this->getList());
 	}
 	
+	/** @Override */
+	function all()
+	{
+		$list_of_items = array(); /* массив объектов Row */
+
+/*		
+		SELECT d.key_detail, d.name_detail, p.key_provider, p.name_organization 
+			FROM detail AS d 
+			LEFT JOIN provider AS p ON d.key_provider=p.key_provider
+*/	
+		
+		
+		
+		
+		$sql = "SELECT d.".$this->getKeyColumn().", d.".$this->getNameColumn().", d.kolvo, d.price, d.key_provider, p.name_organization
+					FROM `".$this->getType()."` AS d
+					LEFT JOIN `provider` AS p
+					ON d.key_provider=p.key_provider";
+		$this->log->debug("Get model list: ".$sql);
+		if($result = $this->db->query($sql))
+		{
+			/* извлечение индексного массива */
+			while($row = $result->fetch_assoc()) $list_of_items[] = $row;
+			/* удаление выборки */
+			$result->free();
+			
+			$this->model->__set('list', $list_of_items);
+			$this->view->generate('list_detail_view.html', null, $this);
+		}
+		else
+		{
+			$this->log->error("Ошибка SQL: ".$this->db->error);
+			return null;
+		}
+	}
+
 	/**
 	 * @Override
 	 */
@@ -61,7 +98,11 @@ class Controller_Detail extends Controller
 			$row['key_provider'] = '';
 			$this->model->__set("is_edit", false);
 		}
+		
+		$providers =$this->getProviders();
+		
 		$this->model->__set("record", $row);
+		$this->model->__set("providers", $providers);
 		$this->view->generate($this->getType().'_edit.html', null, $this);
 	}
 	
@@ -87,8 +128,8 @@ class Controller_Detail extends Controller
 		$record['kolvo'] = $this->db->real_escape_string($_POST['kolvo']);
 		
 		if(isset($_POST['key_provider'])) $record['key_provider'] = $_POST['key_provider'][0];
-		else $record['key_provider'] = 0;
-
+		else $record['key_provider'] = 'NULL';
+		if($record['key_provider'] == 0) $record['key_provider'] = 'NULL';
 		
 		$key = $this->getKeyValue();
 		$this->model->__set("is_edit", $key);
@@ -102,18 +143,20 @@ class Controller_Detail extends Controller
 						`manufacturer`='".$record['manufacturer']."',
 						`car_model`='".$record['car_model']."',
 						`price`=".$record['price'].",
-						`kolvo`=".$record['kolvo']."
+						`kolvo`=".$record['kolvo'].",
+						`key_provider`=".$record['key_provider']."
 						WHERE `".$this->getKeyColumn()."`=$key";
 			}
 			else
 			{
 				$sql = "INSERT INTO `".$this->getType()."`(
-					`name_organization`, `provider_address`, `mobile_phone`, `fax`, `INN`) VALUES(
-					'".$record['name_organization']."',
-					'".$record['provider_address']."',
-					".$record['mobile_phone'].",
-					".$record['fax'].",
-					".$record['INN'].")";
+					`name_detail`, `manufacturer`, `car_model`, `price`, `kolvo`, `key_provider`) VALUES(
+					'".$record['name_detail']."',
+					'".$record['manufacturer']."',
+					'".$record['car_model']."',
+					".$record['price'].",
+					".$record['kolvo'].",
+					".$record['key_provider'].")";
 			}
 				
 			$this->log->debug("update SQL: $sql");
@@ -128,6 +171,26 @@ class Controller_Detail extends Controller
 		$this->model->__set('record', $record);
 		
 		$this->view->generate($this->getType().'_edit.html', null, $this);
+	}
+	
+	function getProviders()
+	{
+		$providers = array();
+		$sql = "SELECT `key_provider`, `".Controller_Provider::COL_FULL_NAME."` FROM `".Controller_Provider::TYPE_NAME."` ORDER BY `".Controller_Provider::COL_FULL_NAME."`";
+		if($result = $this->db->query($sql))
+		{
+			while($row = $result->fetch_assoc()) $providers[] = $row;
+			/* удаление выборки */
+			$result->free();
+		}
+		else
+		{
+			$this->log->error("Ошибка SQL: ".$this->db->error);
+			$this->log->error("SQL: ".$sql);
+			return null;
+		}
+		
+		return $providers;
 	}
 	
 	function getStringRepresentation()
@@ -149,16 +212,16 @@ class Controller_Detail extends Controller
 	/** @Override */
 	function getNameColumn()
 	{
-		return Controller_Provider::COL_FULL_NAME;
+		return Controller_Detail::COL_FULL_NAME;
 	}
 	
 	function getTitle()
 	{
-		return 'Информация о поставщике';
+		return 'Информация о деталях';
 	}
 	
 	function getHeader()
 	{
-		return 'Список поставщиков';
+		return 'Список деталей';
 	}
 }

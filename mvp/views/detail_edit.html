@@ -1,0 +1,81 @@
+<?php
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$key = $controller->getModel()->__get('record')['key_detail'];
+$full_name = $controller->getModel()->__get('record')['name_detail'];
+$manufacturer = $controller->getModel()->__get('record')['manufacturer'];
+$car_model = $controller->getModel()->__get('record')['car_model'];
+$price = $controller->getModel()->__get('record')['price'];
+$kolvo = $controller->getModel()->__get('record')['kolvo'];
+$key_provider = $controller->getModel()->__get('record')['key_provider'];
+$providers = $controller->getModel()->__get('providers');
+
+$error = $controller->getModel()->__get('error');
+
+echo "<br />";
+if(!$is_edit) echo "<h3>Добавить деталь</h3>";
+else echo "<h3>Редактировать деталь</h3>";
+echo '
+		<form method="POST" action="/detail/save/">
+			<table td="tab">
+				<tr>
+					<td class="tab_name">Название детали</td>
+					<td><input type="text" name="name_detail" value="'.htmlentities($full_name).'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Производитель</td>
+					<td><input type="text" name="manufacturer" value="'.htmlentities($manufacturer).'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Модель авто</td>
+					<td><input type="text" name="car_model" value="'.$car_model.'" /></td>
+				</tr>
+
+				<tr>
+					<td  class="tab_name">Цена</td>
+					<td><input type="text" name="price" value="'.$price.'" /></td>
+				</tr>
+
+				<tr>
+					<td  class="tab_name">Количество</td>
+					<td><input type="text" name="kolvo" value="'.$kolvo.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Поставщик</td>
+					<td>
+						<select name="key_provider[]" size="2">
+							<option value="0">---</option>';
+foreach($providers as $provider)
+{
+	echo '
+							<option value="'.$provider['key_provider'].'"';
+	if($provider['key_provider'] == $key_provider) echo ' selected="selected"';
+	echo '
+							>'.$provider['name_organization'].'</option>';
+}
+echo '
+						</select>
+					</td>
+				</tr>';
+				
+if(!empty($error)) echo '
+				<tr>
+					<td colspan="2" class="error">Не заполнено обязательное поле "'.$error.'"!</td>
+				</tr>';
+echo '
+				<tr>
+					<td colspan="2" align="center" style="padding-top:20px;">
+						<input type="submit" name="submit" value="';
+if(!$is_edit) echo "Добавить";
+else echo "Сохранить";
+echo '" />';
+if($is_edit) echo '<input type="hidden" name="key" value="'.$key.'" />';
+echo '
+					</td>
+				</tr>
+			</table>
+		</form>';

@@ -125,6 +125,17 @@ class Controller_Provider extends Controller
 		$this->view->generate($this->getType().'_edit.html', null, $this);
 	}
 	
+	/** @Override */
+	function delete()
+	{
+		$key = $this->getKeyValue();
+		$sql = 'UPDATE `detail` SET `key_provider`=NULL WHERE `key_provider`='.$key;
+		$this->log->debug("delete SQL: $sql");
+		$this->db->query($sql);
+		
+		parent::delete();
+	}
+	
 	function getStringRepresentation()
 	{
 		return self::COL_FULL_NAME;

@@ -1,0 +1,43 @@
+<?php
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$key = $controller->getModel()->__get('record')['key_service'];
+$full_name = $controller->getModel()->__get('record')['name_service'];
+$price = $controller->getModel()->__get('record')['price'];
+
+$error = $controller->getModel()->__get('error');
+
+echo "<br />";
+if(!$is_edit) echo "<h3>Добавить вид работ</h3>";
+else echo "<h3>Редактировать вид работ</h3>";
+echo '
+		<form method="POST" action="/service/save/">
+			<table td="tab">
+				<tr>
+					<td class="tab_name">Вид работы</td>
+					<td><input type="text" name="name_service" value="'.htmlentities($full_name).'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Стоимость</td>
+					<td><input type="text" name="price" value="'.$price.'" /></td>
+				</tr>';
+				
+if(!empty($error)) echo '
+				<tr>
+					<td colspan="2" class="error">Не заполнено обязательное поле "'.$error.'"!</td>
+				</tr>';
+echo '
+				<tr>
+					<td colspan="2" align="center" style="padding-top:20px;">
+						<input type="submit" name="submit" value="';
+if(!$is_edit) echo "Добавить";
+else echo "Сохранить";
+echo '" />';
+if($is_edit) echo '<input type="hidden" name="key" value="'.$key.'" />';
+echo '
+					</td>
+				</tr>
+			</table>
+		</form>';

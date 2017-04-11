@@ -1,0 +1,6 @@
+CREATE TABLE `order` (
+	`key_order` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`key_client` INT(10),
+	FOREIGN KEY (`key_client`) REFERENCES `client`(`key_client`) ON DELETE SET NULL
+);

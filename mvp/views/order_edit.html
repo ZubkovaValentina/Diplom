@@ -1,0 +1,61 @@
+<?php
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$key = $controller->getModel()->__get('record')['key_order'];
+$date = $controller->getModel()->__get('record')['date'];
+$key_client = $controller->getModel()->__get('record')['key_client'];
+$clients = $controller->getModel()->__get('clients');
+
+$error = $controller->getModel()->__get('error');
+
+echo "<br />";
+if(!$is_edit) echo "<h3>Добавить заказ</h3>";
+else echo "<h3>Редактировать заказ</h3>";
+echo '
+		<form method="POST" action="/order/save/">
+			<table td="tab">
+				<tr>
+					<td class="tab_name">Номер заказа</td>
+					<td>'.$key.'</td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Дата (\'гггг-мм-дд\')</td>
+					<td><input type="text" name="date" value="'.$date.'" /></td>
+				</tr>
+				
+				<tr>
+					<td  class="tab_name">Клиент</td>
+					<td>
+						<select name="key_client[]" size="2">';
+foreach($clients as $client)
+{
+	echo '
+							<option value="'.$client['key_client'].'"';
+	if($client['key_client'] == $key_client) echo ' selected="selected"';
+	echo '
+							>'.$client['full_name'].'</option>';
+}
+echo '
+						</select>
+					</td>
+				</tr>';
+				
+if(!empty($error)) echo '
+				<tr>
+					<td colspan="2" class="error">Не заполнено обязательное поле "'.$error.'"!</td>
+				</tr>';
+echo '
+				<tr>
+					<td colspan="2" align="center" style="padding-top:20px;">
+						<input type="submit" name="submit" value="';
+if(!$is_edit) echo "Добавить";
+else echo "Сохранить";
+echo '" />';
+if($is_edit) echo '<input type="hidden" name="key" value="'.$key.'" />';
+echo '
+					</td>
+				</tr>
+			</table>
+		</form>';

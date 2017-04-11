@@ -1,0 +1,22 @@
+		<table id="list">
+			<tr>
+				<th>X</th>
+				<th>Номер заказа</th>
+				<th>Дата</th>
+				<th>Клиент</th>
+			</tr>
+<?php
+
+
+foreach($controller->getModel()->__get('list') as $row) include "list_order_item.html";
+
+?>
+		</table>
+		<form method="GET" action="<?php echo '/'.$controller->getType().'/'.Controller::ACTION_EDIT.'/';
+
+?>
+">
+			<div style="margin-top:20px;">
+				<input type="submit" value="Добавить" />
+			</div>
+		</form>

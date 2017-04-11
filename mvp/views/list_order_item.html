@@ -1,0 +1,51 @@
+			<tr>
+				<td class="tab_name">
+<?php
+
+
+/*
+Формируем строку вида:
+<a href="/{my_type}/delete/?key={my_key_value}" onclick="return confirm('Точно удалить {name}?'); return false;">X</a>
+
+Например, для типа «клиент» с ключом 567 это будет:
+<a href="/client/delete/?key=567" onclick="return confirm('Точно удалить {какое-то имя клиента}?'); return false;">X</a>
+*/
+echo '					';
+echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row['key_order'].'" onclick="return confirm(\'Точно удалить '.$row['key_order'].'?\'); return false;">X</a>
+';
+
+
+
+
+?>
+				</td>
+				<td>
+<?php
+
+
+
+
+/*
+Формируем строку вида:
+*/
+echo '					';
+echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row['key_order'].'">'.$row['key_order'].'</a>
+';
+
+
+
+
+?>
+				</td>
+				<td>
+<?php
+echo $row['date'];
+?>
+				</td>
+				
+				<td>
+<?php
+echo '<a href="/client/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row['key_client'].'">'.$row['full_name'].'</a>';
+?>
+				</td>
+			</tr>

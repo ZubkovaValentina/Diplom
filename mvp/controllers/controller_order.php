@@ -6,7 +6,7 @@ require_once 'models/Model.php';
 
 class Controller_Order extends Controller
 {
-	const TYPE_NAME = 'order';
+	const TYPE_NAME = 'my_order';
 	const COL_FULL_NAME = 'key_order';
 	
 	function __construct()
@@ -58,9 +58,9 @@ class Controller_Order extends Controller
 		{
 			$this->model->__set("is_edit", true);
 			$sql = "SELECT * FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
+			
 			if($result = $this->db->query($sql))
 			{
-			
 				/* извлечение ассоциативного массива */
 				$row = $result->fetch_assoc();
 				if($row === null)
@@ -74,14 +74,42 @@ class Controller_Order extends Controller
 			}
 			else
 			{
+				$this->log->error("Ошибка SQL: ".$this->db->error.' '.$sql);
+				return null;
+			}
+			
+			
+			
+			/* Выцепляем из БД список деталей для этого заказа */
+			
+			$sql = "SELECT o.key_order, d.name_detail AS name_detail, d.price AS price
+	FROM order_detail AS od 
+	JOIN detail AS d ON d.key_detail=od.key_detail
+	JOIN my_order AS o ON o.key_order=od.key_order
+	WHERE od.key_order=".$key;
+			$details = array();
+			$detail_sum = 0;
+			if($result = $this->db->query($sql))
+			{
+				while($row1 = $result->fetch_assoc())
+				{
+					$details[] = $row1;
+					$detail_sum += $row1['price'];
+				}
+				/* удаление выборки */
+				$result->free();
+			}
+			else
+			{
 				$this->log->error("Ошибка SQL: ".$this->db->error);
+				$this->log->error("SQL: ".$sql);
 				return null;
 			}
 		}
 		else
 		{
 			$row = array();
-			$row['key_'.$this->getType()] = '';
+			$row['key_order'] = '';
 			$row['date'] = '';
 			$row['key_client'] = '';
 			$this->model->__set("is_edit", false);
@@ -91,7 +119,12 @@ class Controller_Order extends Controller
 		
 		$this->model->__set("record", $row);
 		$this->model->__set("clients", $clients);
-		$this->view->generate($this->getType().'_edit.html', null, $this);
+		
+		$this->model->__set("detail_sum", $detail_sum);
+		$this->model->__set("details", $details);
+		
+		
+		$this->view->generate('order_edit.html', null, $this);
 	}
 	
 	/**
@@ -175,13 +208,13 @@ class Controller_Order extends Controller
 	/** @Override */
 	function getKeyColumn()
 	{
-		return 'key_'.$this->getType();
+		return 'key_order';
 	}
 	
 	/** @Override */
 	function getNameColumn()
 	{
-		return Controller_Order::COL_FULL_NAME;
+		return 'key_order';
 	}
 	
 	function getTitle()
@@ -191,6 +224,6 @@ class Controller_Order extends Controller
 	
 	function getHeader()
 	{
-		return 'Список заказов';
+		return 'Заказы';
 	}
 }

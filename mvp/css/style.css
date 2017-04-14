@@ -27,3 +27,21 @@ h1 {padding-top:16px;}
 	font-style:bold;
 	padding-top:16px;
 }
+
+
+table#details_list
+{
+	margin-bottom: 10px;
+	border-collapse: collapse; /* Убираем двойные линии между ячейками */
+}
+
+table#details_list td, th
+{
+	padding: 5px; /* Поля вокруг содержимого таблицы */
+    border: 1px solid black; /* Параметры рамки */
+}
+
+table#details_list th
+{
+	background: #b0e0e6; /* Цвет фона */
+}

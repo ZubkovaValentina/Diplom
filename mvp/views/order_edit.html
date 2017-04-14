@@ -7,6 +7,15 @@ $date = $controller->getModel()->__get('record')['date'];
 $key_client = $controller->getModel()->__get('record')['key_client'];
 $clients = $controller->getModel()->__get('clients');
 
+$detail_sum = $controller->getModel()->__get('detail_sum');
+$details = $controller->getModel()->__get('details');
+
+$all_details = array(
+	array('name_detail'=>'A', 'price'=>100), 
+	array('name_detail'=>'B', 'price'=>120),
+	array('name_detail'=>'C', 'price'=>150)
+);
+
 $error = $controller->getModel()->__get('error');
 
 echo "<br />";
@@ -58,4 +67,56 @@ echo '
 					</td>
 				</tr>
 			</table>
-		</form>';
+		</form>
+		
+		<div id="details">
+			<hr />
+			<h3>Детали в заказе: '.$key.'</h3>
+			<table id="details_list">
+				<tr>
+					<th>X</th>
+					<th>Деталь</th>
+					<th>Цена, руб.</th>
+				</tr>';
+foreach($details as $detail)
+{
+	echo '
+				<tr>
+					<td><a href="">X</a></td>
+					<td>'.$detail['name_detail'].'</td>
+					<td>'.$detail['price'].'</td>
+				</tr>';
+}
+echo '
+				<tr>
+					<td colspan="2">Итого:</td>
+					<td>'.$detail_sum.'</td>
+				</tr>
+			</table>
+			<form method="GET" action="/order/edit/?key='.$key.'">
+				<table>
+					<tr>
+						<td>Добавить деталь:</td>
+						<td>
+							<select name="detail[]" onchange="this.form.submit()">';
+foreach($all_details as $detail)
+{
+	echo '
+								<option value="11">'.$detail['name_detail'].'</option>';
+}
+	
+echo '
+							</select>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="key" value="'.$key.'" />
+			</form>
+		</div>
+		
+		<div id="services">
+			<hr />
+			<h3>Список работ:</h3>
+			<table id="services_list">
+			</table>
+		</div>';

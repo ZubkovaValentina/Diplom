@@ -35,7 +35,7 @@ table#details_list
 	border-collapse: collapse; /* Убираем двойные линии между ячейками */
 }
 
-table#details_list td, th
+table#details_list td, table#details_list th
 {
 	padding: 5px; /* Поля вокруг содержимого таблицы */
     border: 1px solid black; /* Параметры рамки */

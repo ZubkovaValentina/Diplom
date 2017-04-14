@@ -82,7 +82,11 @@ class Controller_Order extends Controller
 			
 			/* Выцепляем из БД список деталей для этого заказа */
 			
-			$sql = "SELECT o.key_order, d.name_detail AS name_detail, d.price AS price
+			$sql = "SELECT o.key_order, 
+			d.key_detail AS key_detail, 
+			d.name_detail AS name_detail, 
+			d.price AS price
+			
 	FROM order_detail AS od 
 	JOIN detail AS d ON d.key_detail=od.key_detail
 	JOIN my_order AS o ON o.key_order=od.key_order

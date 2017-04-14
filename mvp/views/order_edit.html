@@ -10,11 +10,13 @@ $clients = $controller->getModel()->__get('clients');
 $detail_sum = $controller->getModel()->__get('detail_sum');
 $details = $controller->getModel()->__get('details');
 
+/*
 $all_details = array(
 	array('name_detail'=>'A', 'price'=>100), 
 	array('name_detail'=>'B', 'price'=>120),
 	array('name_detail'=>'C', 'price'=>150)
 );
+*/
 
 $error = $controller->getModel()->__get('error');
 
@@ -99,10 +101,10 @@ echo '
 						<td>Добавить деталь:</td>
 						<td>
 							<select name="detail[]" onchange="this.form.submit()">';
-foreach($all_details as $detail)
+foreach($details as $detail)
 {
 	echo '
-								<option value="11">'.$detail['name_detail'].'</option>';
+								<option value="'.$detail['key_detail'].'">'.$detail['name_detail'].'</option>';
 }
 	
 echo '

@@ -5,11 +5,16 @@ $is_edit = $controller->getModel()->__get('is_edit');
 $key = $controller->getModel()->__get('record')['key_order'];
 $date = $controller->getModel()->__get('record')['date'];
 $key_client = $controller->getModel()->__get('record')['key_client'];
-$clients = $controller->getModel()->__get('clients');
 
 $detail_sum = $controller->getModel()->__get('detail_sum');
 $details = $controller->getModel()->__get('details');
 
+$service_sum = $controller->getModel()->__get('service_sum');
+$services = $controller->getModel()->__get('services');
+
+$all_clients = $controller->getModel()->__get('all_clients');
+$all_details = $controller->getModel()->__get('all_details');
+$all_services = $controller->getModel()->__get('all_services');
 /*
 $all_details = array(
 	array('name_detail'=>'A', 'price'=>100), 
@@ -40,7 +45,7 @@ echo '
 					<td  class="tab_name">Клиент</td>
 					<td>
 						<select name="key_client[]" size="2">';
-foreach($clients as $client)
+foreach($all_clients as $client)
 {
 	echo '
 							<option value="'.$client['key_client'].'"';
@@ -51,6 +56,10 @@ foreach($clients as $client)
 echo '
 						</select>
 					</td>
+				</tr>
+				<tr>
+					<td class="tab_name itog">Общая сумма заказа:</td>
+					<td class="tab_name itog">'.($detail_sum+$service_sum).' руб.</td>
 				</tr>';
 				
 if(!empty($error)) echo '
@@ -69,12 +78,16 @@ echo '
 					</td>
 				</tr>
 			</table>
-		</form>
+		</form>';
+		
+if($key > 0)
+{
+	echo '
 		
 		<div id="details">
 			<hr />
-			<h3>Детали в заказе: '.$key.'</h3>
-			<table id="details_list">
+			<h3>Детали в заказе:</h3>
+			<table class="links_list">
 				<tr>
 					<th>X</th>
 					<th>Деталь</th>
@@ -84,7 +97,7 @@ foreach($details as $detail)
 {
 	echo '
 				<tr>
-					<td><a href="">X</a></td>
+					<td><a href="/order/edit/?key='.$key.'&del_detail='.$detail['id'].'">X</a></td>
 					<td>'.$detail['name_detail'].'</td>
 					<td>'.$detail['price'].'</td>
 				</tr>';
@@ -95,13 +108,14 @@ echo '
 					<td>'.$detail_sum.'</td>
 				</tr>
 			</table>
-			<form method="GET" action="/order/edit/?key='.$key.'">
+			<form method="GET" action="/order/edit/">
 				<table>
 					<tr>
 						<td>Добавить деталь:</td>
 						<td>
-							<select name="detail[]" onchange="this.form.submit()">';
-foreach($details as $detail)
+							<select name="detail[]" onchange="this.form.submit()">
+								<option value="0">---</option>';
+foreach($all_details as $detail)
 {
 	echo '
 								<option value="'.$detail['key_detail'].'">'.$detail['name_detail'].'</option>';
@@ -113,12 +127,65 @@ echo '
 					</tr>
 				</table>
 				<input type="hidden" name="key" value="'.$key.'" />
+				<input type="hidden" name="action" value="add" />
 			</form>
 		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		<div id="services">
 			<hr />
 			<h3>Список работ:</h3>
-			<table id="services_list">
+			<table class="links_list">
+				<tr>
+					<th>X</th>
+					<th>Вид работы:</th>
+					<th>Цена, руб.</th>
+				</tr>';
+foreach($services as $service)
+{
+	echo '
+				<tr>
+					<td><a href="/order/edit/?key='.$key.'&del_service='.$service['id'].'">X</a></td>
+					<td>'.$service['name_service'].'</td>
+					<td>'.$service['price'].'</td>
+				</tr>';
+}
+echo '
+				<tr>
+					<td colspan="2">Итого:</td>
+					<td>'.$service_sum.'</td>
+				</tr>
 			</table>
+			<form method="GET" action="/order/edit/">
+				<table>
+					<tr>
+						<td>Добавить вид работы:</td>
+						<td>
+							<select name="service[]" onchange="this.form.submit()">
+								<option value="0">---</option>';
+foreach($all_services as $service)
+{
+	echo '
+								<option value="'.$service['key_service'].'">'.$service['name_service'].'</option>';
+}
+	
+echo '
+							</select>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="key" value="'.$key.'" />
+				<input type="hidden" name="action" value="add" />
+			</form>
 		</div>';
+}
+

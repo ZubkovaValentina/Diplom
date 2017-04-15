@@ -6,10 +6,17 @@ h1 {padding-top:16px;}
 	padding-right:20px;
 	font-style:italic;
 }
+
+.itog
+{
+	font-weight:bold;
+}
+
 .tab_name a
 {
 	color:red;
 }
+
 #tabs div 
 {
 	padding:0 16px 0 0;
@@ -29,19 +36,20 @@ h1 {padding-top:16px;}
 }
 
 
-table#details_list
+table.links_list
 {
 	margin-bottom: 10px;
 	border-collapse: collapse; /* Убираем двойные линии между ячейками */
 }
 
-table#details_list td, table#details_list th
+table.links_list td, table.links_list th
 {
 	padding: 5px; /* Поля вокруг содержимого таблицы */
     border: 1px solid black; /* Параметры рамки */
 }
 
-table#details_list th
+table.links_list th
 {
 	background: #b0e0e6; /* Цвет фона */
 }
+

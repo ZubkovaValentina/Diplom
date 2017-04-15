@@ -2,6 +2,7 @@
 
 require_once 'controllers/Controller.php';
 require_once 'controllers/controller_client.php';
+require_once 'controllers/controller_detail.php';
 require_once 'models/Model.php';
 
 class Controller_Order extends Controller
@@ -56,8 +57,15 @@ class Controller_Order extends Controller
 		/* В запросе указан key — значит это редактирование */
 		if($key)
 		{
+			/* Проверяем GET-запрос - запросы на добавление, удаление деталей в заказ */
+			$this->processLink($key, 'detail');
+			
+			/* Проверяем GET-запрос - запросы на добавление, удаление работ в заказ */
+			$this->processLink($key, 'service');
+			
+			
 			$this->model->__set("is_edit", true);
-			$sql = "SELECT * FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
+			$sql = "SELECT key_order, DATE(`date`) AS `date`, key_client FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
 			
 			if($result = $this->db->query($sql))
 			{
@@ -68,6 +76,7 @@ class Controller_Order extends Controller
 					echo "Ошибка! Запись с ключом $key не найдена в таблице «".$this->getType()."»";
 					exit(0);
 				}
+				else $this->model->__set("record", $row);
 			
 				/* удаление выборки */
 				$result->free();
@@ -78,37 +87,21 @@ class Controller_Order extends Controller
 				return null;
 			}
 			
-			
-			
 			/* Выцепляем из БД список деталей для этого заказа */
 			
-			$sql = "SELECT o.key_order, 
-			d.key_detail AS key_detail, 
-			d.name_detail AS name_detail, 
-			d.price AS price
-			
-	FROM order_detail AS od 
-	JOIN detail AS d ON d.key_detail=od.key_detail
-	JOIN my_order AS o ON o.key_order=od.key_order
-	WHERE od.key_order=".$key;
 			$details = array();
-			$detail_sum = 0;
-			if($result = $this->db->query($sql))
-			{
-				while($row1 = $result->fetch_assoc())
-				{
-					$details[] = $row1;
-					$detail_sum += $row1['price'];
-				}
-				/* удаление выборки */
-				$result->free();
-			}
-			else
-			{
-				$this->log->error("Ошибка SQL: ".$this->db->error);
-				$this->log->error("SQL: ".$sql);
-				return null;
-			}
+			$detail_sum = $this->getOrderLinks($key, 'detail', $details);
+			
+			$this->model->__set("detail_sum", $detail_sum);
+			$this->model->__set("details", $details);
+
+			/* Выцепляем из БД список работ для этого заказа */
+			
+			$services = array();
+			$service_sum = $this->getOrderLinks($key, 'service', $services);
+			
+			$this->model->__set("service_sum", $service_sum);
+			$this->model->__set("services", $services);
 		}
 		else
 		{
@@ -119,14 +112,13 @@ class Controller_Order extends Controller
 			$this->model->__set("is_edit", false);
 		}
 		
-		$clients =$this->getClients();
+		$all_clients = $this->getAllLinks('client', 'full_name');
+		$all_details =  $this->getAllLinks('detail', 'name_detail');
+		$all_services = $this->getAllLinks('service', 'name_service');
 		
-		$this->model->__set("record", $row);
-		$this->model->__set("clients", $clients);
-		
-		$this->model->__set("detail_sum", $detail_sum);
-		$this->model->__set("details", $details);
-		
+		$this->model->__set("all_clients", $all_clients);
+		$this->model->__set("all_details", $all_details);
+		$this->model->__set("all_services", $all_services);
 		
 		$this->view->generate('order_edit.html', null, $this);
 	}
@@ -167,8 +159,9 @@ class Controller_Order extends Controller
 				
 			$this->log->debug("update SQL: $sql");
 			$this->db->query($sql);
+			if($this->db->insert_id > 0) $key = $thiis->db->insert_id;
 			/* Редирект на список текущего типа {my_type} */
-			header('Location: /'.$this->getType().'/');
+			header('Location: /order/edit/?key='.$key);
 			exit(0);
 		}
 		$this->model->__set('error', $error);
@@ -179,13 +172,57 @@ class Controller_Order extends Controller
 		$this->view->generate($this->getType().'_edit.html', null, $this);
 	}
 	
-	function getClients()
+	/**
+	 * $key - номер заказа
+	 * $link - таблица для связи (detail или service)
+	 */
+	function processLink($key, $link)
 	{
-		$clients = array();
-		$sql = "SELECT `key_client`, `".Controller_Client::COL_FULL_NAME."` FROM `".Controller_Client::TYPE_NAME."` ORDER BY `".Controller_Client::COL_FULL_NAME."`";
+		$key_link = 0;
+		if(isset($_GET[$link]) and $_GET[$link][0] != 0)
+		{
+			$key_link = $_GET[$link][0];
+			$sign = '-';
+			if($_GET['action'] == 'add') $sql = "
+INSERT INTO order_$link(key_order, key_$link) VALUES(".$key.", ".$key_link.")";
+
+		}
+		else if(isset($_GET["del_$link"]) and $_GET["del_$link"] != 0)
+		{
+			$key_link = $_GET["del_$link"];
+			$sign = '+';
+			$sql = "
+DELETE FROM order_$link WHERE id=".$key_link;
+		}
+
+		if(isset($sql) and !$this->db->query($sql))
+		{
+			$this->log->error("Ошибка SQL: ".$this->db->error.' '.$sql);
+			exit(0);
+		}
+		
+		if($link === 'detail' and isset($sign))
+		{
+			$sql = "UPDATE detail SET kolvo=kolvo".$sign."1 WHERE key_detail=$key_link";
+			if(isset($sql) and !$this->db->query($sql))
+			{
+				$this->log->error("Ошибка SQL: ".$this->db->error.' '.$sql);
+				exit(0);
+			}
+		}
+	}
+	
+	/**
+	 * Выцепляем все записи из связанной талицы $link 
+	 */
+	function getAllLinks($link, $name_col)
+	{
+		$links = array();
+		$sql = "
+SELECT `key_$link`, `$name_col` FROM `$link` ORDER BY `$name_col`";
 		if($result = $this->db->query($sql))
 		{
-			while($row = $result->fetch_assoc()) $clients[] = $row;
+			while($row = $result->fetch_assoc()) $links[] = $row;
 			/* удаление выборки */
 			$result->free();
 		}
@@ -196,7 +233,50 @@ class Controller_Order extends Controller
 			return null;
 		}
 		
-		return $clients;
+		return $links;
+	}
+	
+	/**
+	 * Выцепляем связанные с заказом данные из таблицы $link
+	 * $key - номер заказа
+	 * $link - название выцепляемой таблицы (detail, service)
+	 * $links - массив строк выцепляемой таблицы
+	 * возвращает сумму цен.
+	 */
+	 
+	function getOrderLinks($key, $link, &$links)
+	{
+		$sql = "
+SELECT
+	od.id AS id,
+	o.key_order, 
+	d.key_$link AS key_$link, 
+	d.name_$link AS name_$link, 
+	d.price AS price
+			
+	FROM order_$link AS od 
+		JOIN $link AS d ON d.key_$link=od.key_$link
+		JOIN my_order AS o ON o.key_order=od.key_order
+	WHERE od.key_order=".$key;
+	
+		$sum = 0;
+		if($result = $this->db->query($sql))
+		{
+			while($row = $result->fetch_assoc())
+			{
+				$links[] = $row;
+				$sum += $row['price'];
+			}
+			/* удаление выборки */
+			$result->free();
+		}
+		else
+		{
+			$this->log->error("Ошибка SQL: ".$this->db->error);
+			$this->log->error("SQL: ".$sql);
+			return null;
+		}
+		return $sum;
 	}
 	
 	function getStringRepresentation()

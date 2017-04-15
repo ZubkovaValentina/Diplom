@@ -49,6 +49,8 @@ echo '
 					<td>
 						<select name="key_provider[]" size="2">
 							<option value="0">---</option>';
+if(isset($providers))
+{
 foreach($providers as $provider)
 {
 	echo '
@@ -56,6 +58,7 @@ foreach($providers as $provider)
 	if($provider['key_provider'] == $key_provider) echo ' selected="selected"';
 	echo '
 							>'.$provider['name_organization'].'</option>';
+}
 }
 echo '
 						</select>

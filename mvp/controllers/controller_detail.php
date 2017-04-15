@@ -118,14 +118,16 @@ class Controller_Detail extends Controller
 		if(empty($_POST['manufacturer'])) $error = 'Производитель';
 		if(empty($_POST['car_model'])) $error = 'Модель авто';
 		if(empty($_POST['price'])) $error = 'Цена';
-		if(empty($_POST['kolvo'])) $error = 'Количество';
+		
 		
 		$record = array();
 		$record['name_detail'] = $this->db->real_escape_string($_POST['name_detail']);
 		$record['manufacturer'] = $this->db->real_escape_string($_POST['manufacturer']);
 		$record['car_model'] = $this->db->real_escape_string($_POST['car_model']);
 		$record['price'] = $this->db->real_escape_string($_POST['price']);
-		$record['kolvo'] = $this->db->real_escape_string($_POST['kolvo']);
+		
+		if(empty($_POST['kolvo'])) $record['kolvo'] = 0;
+		else $record['kolvo'] = $this->db->real_escape_string($_POST['kolvo']);
 		
 		if(isset($_POST['key_provider'])) $record['key_provider'] = $_POST['key_provider'][0];
 		else $record['key_provider'] = 'NULL';

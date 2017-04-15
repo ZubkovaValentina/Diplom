@@ -58,7 +58,7 @@ class Controller_Order extends Controller
 		if($key)
 		{
 			/* Проверяем GET-запрос - запросы на добавление, удаление деталей в заказ */
-			$this->processLink($key, 'detail');
+			$is_error = $this->processLink($key, 'detail');
 			
 			/* Проверяем GET-запрос - запросы на добавление, удаление работ в заказ */
 			$this->processLink($key, 'service');
@@ -119,6 +119,7 @@ class Controller_Order extends Controller
 		$this->model->__set("all_clients", $all_clients);
 		$this->model->__set("all_details", $all_details);
 		$this->model->__set("all_services", $all_services);
+		$this->model->__set("is_error", $is_error);
 		
 		$this->view->generate('order_edit.html', null, $this);
 	}
@@ -191,8 +192,29 @@ INSERT INTO order_$link(key_order, key_$link) VALUES(".$key.", ".$key_link.")";
 		{
 			$key_link = $_GET["del_$link"];
 			$sign = '+';
+			
+			
+			$removed_key_detail = 0;
+			if($link === 'detail')
+			{
+				/* Предварительно узнаем key_detail чтобы потом вернуть ее на склад */
+				$sql =
+"SELECT key_detail FROM order_detail WHERE id=$key_link";
+				if($result = $this->db->query($sql))
+				{
+					while($row = $result->fetch_assoc())
+					{
+						$removed_key_detail = $row['key_detail'];
+						break;
+					}
+					/* удаление выборки */
+					$result->free();
+				}
+			}
+			
 			$sql = "
 DELETE FROM order_$link WHERE id=".$key_link;
+			$key_link = $removed_key_detail;
 		}
 
 		if(isset($sql) and !$this->db->query($sql))
@@ -201,8 +223,31 @@ DELETE FROM order_$link WHERE id=".$key_link;
 			exit(0);
 		}
 		
+		/* Добавляем или удаляем со склада деталь (уменьшаем или увеличиваем на 
+		единицу поле «kolvo» ) */
 		if($link === 'detail' and isset($sign))
 		{
+			/* Перед удалением проверяем оставшееся кол-во и, если 0, то вводим сообщение о пустом складе */
+			if($sign === '-')
+			{
+				$sql = "SELECT kolvo, name_detail FROM detail WHERE key_detail=$key_link";
+				$kolvo = 0;
+				$name_detail = '';
+				if($result = $this->db->query($sql))
+				{
+					while($row = $result->fetch_assoc())
+					{
+						$kolvo = $row['kolvo'];
+						$name_detail = $row['name_detail'];
+						break;
+					}
+					/* удаление выборки */
+					$result->free();
+				}
+				if($kolvo == 0) return $name_detail;
+			}
+			
+			
 			$sql = "UPDATE detail SET kolvo=kolvo".$sign."1 WHERE key_detail=$key_link";
 			if(isset($sql) and !$this->db->query($sql))
 			{
@@ -210,6 +255,7 @@ DELETE FROM order_$link WHERE id=".$key_link;
 				exit(0);
 			}
 		}
+		return false;
 	}
 	
 	/**
@@ -217,9 +263,12 @@ DELETE FROM order_$link WHERE id=".$key_link;
 	 */
 	function getAllLinks($link, $name_col)
 	{
+		$sql_where = '';
+		if($link === 'detail') $sql_where = "WHERE kolvo > 0";
+		
 		$links = array();
 		$sql = "
-SELECT `key_$link`, `$name_col` FROM `$link` ORDER BY `$name_col`";
+SELECT `key_$link`, `$name_col` FROM `$link` $sql_where ORDER BY `$name_col`";
 		if($result = $this->db->query($sql))
 		{
 			while($row = $result->fetch_assoc()) $links[] = $row;

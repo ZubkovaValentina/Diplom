@@ -5,7 +5,7 @@ require_once 'controllers/controller_client.php';
 require_once 'controllers/controller_detail.php';
 require_once 'models/Model.php';
 
-class Controller_Order extends Controller
+class Controller_Invoice extends Controller
 {
 	const TYPE_NAME = 'my_order';
 	const COL_FULL_NAME = 'key_order';
@@ -26,9 +26,18 @@ class Controller_Order extends Controller
 
 */	
 		
-		
-		$sql = "SELECT o.`".$this->getKeyColumn()."`, DATE(o.`date`) AS `date`, c.`key_client`, c.`full_name` FROM `".$this->getType()."` AS o 
-			LEFT JOIN `client` AS c ON o.key_client=c.key_client;";
+		$sql = "
+SELECT o.`".$this->getKeyColumn()."`,
+	DATE(o.`date`) AS `date`,
+	c.`key_client`,
+	c.`full_name`,
+	o.accepted AS key_accepted,
+	(SELECT e1.full_name FROM employee AS e1 WHERE e1.key_employee=o.accepted) AS accepted_name,
+	o.passed AS key_passed,
+	(SELECT e2.full_name FROM employee AS e2 WHERE e2.key_employee=o.passed) AS passed_name
+	
+	FROM `".$this->getType()."` AS o 
+	LEFT JOIN `client` AS c ON o.key_client=c.key_client;";
 		
 		$this->log->debug("Get model list: ".$sql);
 		if($result = $this->db->query($sql))
@@ -39,7 +48,7 @@ class Controller_Order extends Controller
 			$result->free();
 			
 			$this->model->__set('list', $list_of_items);
-			$this->view->generate('list_order_view.html', null, $this);
+			$this->view->generate('list_invoice_view.html', null, $this);
 		}
 		else
 		{
@@ -352,11 +361,11 @@ SELECT
 	
 	function getTitle()
 	{
-		return 'Информация о заказах';
+		return 'Информация о накладных';
 	}
 	
 	function getHeader()
 	{
-		return 'Заказы';
+		return 'Накладные';
 	}
 }

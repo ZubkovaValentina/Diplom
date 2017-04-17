@@ -1,8 +1,12 @@
 CREATE TABLE my_order (
-	`key_order` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`key_order` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`key_client` INT(10),
-	FOREIGN KEY (`key_client`) REFERENCES `client`(`key_client`) ON DELETE SET NULL
+	`accepted` INT(10) UNSIGNED,
+	`passed` INT(10) UNSIGNED,
+	FOREIGN KEY (`key_client`) REFERENCES `client`(`key_client`)     ON DELETE SET NULL,
+	FOREIGN KEY (`accepted`) REFERENCES `employee`(`key_employee`) ON DELETE SET NULL,
+	FOREIGN KEY (`passed`) REFERENCES `employee`(`key_employee`) ON DELETE SET NULL
 );
 
 CREATE TABLE `order_detail` (
@@ -64,3 +68,4 @@ SELECT SUM(d.price) FROM order_detail AS od
 DELETE FROM detail WHERE key_detail=3;
 
 /* Выполняем пункты 3 и 4, чтобы убедиться. */
+

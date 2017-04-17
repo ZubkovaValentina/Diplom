@@ -1,0 +1,41 @@
+			<tr>
+				<td>
+<?php
+
+
+
+
+/*
+Формируем строку вида:
+*/
+echo '					';
+echo '<a href="/invoice/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row['key_order'].'">'.$row['key_order'].'</a>
+';
+
+
+
+
+?>
+				</td>
+				<td>
+<?php
+echo $row['date'];
+?>
+				</td>
+				
+				<td>
+<?php
+echo '<a href="/client/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row['key_client'].'">'.$row['full_name'].'</a>';
+?>
+				</td>
+				<td>
+<?php
+echo '<a href="/employee/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row['key_accepted'].'">'.$row['accepted_name'].'</a>';
+?>
+				</td>
+				<td>
+<?php
+echo '<a href="/employee/'.Controller::ACTION_EDIT.'/?'.Controller::PARAM_KEY.'='.$row['key_passed'].'">'.$row['passed_name'].'</a>';
+?>
+				</td>
+			</tr>

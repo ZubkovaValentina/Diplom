@@ -1,0 +1,14 @@
+		<table id="list">
+			<tr>
+				<th>Номер заказа</th>
+				<th>Дата</th>
+				<th>Клиент</th>
+				<th>Принял</th>
+				<th>Сдал</th>
+			</tr>
+<?php
+
+
+foreach($controller->getModel()->__get('list') as $row) include "list_invoice_item.html";
+
+?>

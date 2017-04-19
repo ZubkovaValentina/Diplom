@@ -2,17 +2,14 @@ CREATE TABLE my_order (
 	`key_order` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`key_client` INT(10),
-	`accepted` INT(10) UNSIGNED,
-	`passed` INT(10) UNSIGNED,
-	FOREIGN KEY (`key_client`) REFERENCES `client`(`key_client`)     ON DELETE SET NULL,
-	FOREIGN KEY (`accepted`) REFERENCES `employee`(`key_employee`) ON DELETE SET NULL,
-	FOREIGN KEY (`passed`) REFERENCES `employee`(`key_employee`) ON DELETE SET NULL
+	FOREIGN KEY (`key_client`) REFERENCES `client`(`key_client`) ON DELETE SET NULL
 );
 
 CREATE TABLE `order_detail` (
 	`id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`key_order` INT(10),
 	`key_detail` INT(10),
+	`key_employee` INT(10),
 	FOREIGN KEY (`key_order`) REFERENCES my_order(`key_order`) ON DELETE SET NULL,
 	FOREIGN KEY (`key_detail`) REFERENCES `detail`(`key_detail`) ON DELETE SET NULL
 );

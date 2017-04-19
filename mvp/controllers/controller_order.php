@@ -255,9 +255,10 @@ DELETE FROM order_$link WHERE id=".$key_link;
 				if($kolvo == 0) return $name_detail;
 			}
 			
-			
+			/*уменьшение детали или увелечение*/
 			$sql = "UPDATE detail SET kolvo=kolvo".$sign."1 WHERE key_detail=$key_link";
-			
+			//echo $sql;
+			//exit(0);
 			if(isset($sql) and !$this->db->query($sql))
 			{
 				$this->log->error("Ошибка SQL: ".$this->db->error.' '.$sql);

@@ -122,7 +122,10 @@ abstract class Controller
 		$sql = "DELETE FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
 		$this->log->debug("delete SQL: $sql");
 		$this->db->query($sql);
-		$redirect = 'Location: /'.$this->getType().'/';
+		$location = $this->getType();
+		// грязный хак
+		if($location === 'my_order') $location = 'order';
+		$redirect = 'Location: /'.$location.'/';
 		/* Редирект на список текущего типа {my_type} */
 		header($redirect);
 		exit(0);

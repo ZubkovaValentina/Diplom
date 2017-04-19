@@ -135,10 +135,13 @@ class Controller_Order extends Controller
 		
 		$record = array();
 		
-		$record['key_provider'] = 0;
+		$record['key_order'] = 0;
+		$record['key_client'] = 0;
 		if(isset($_POST['key_client'])) $record['key_client'] = $_POST['key_client'][0];
 		
 		if($record['key_client'] == 0) $error = 'Клиент';
+		if(empty($_POST['date'])) $record['date'] = date('Y-m-d');
+		else $record['date'] = $this->db->real_escape_string($_POST['date']);
 		
 		$key = $this->getKeyValue();
 		$this->model->__set("is_edit", $key);
@@ -148,14 +151,15 @@ class Controller_Order extends Controller
 			if($key)
 			{
 				$sql = "UPDATE `".$this->getType()."` SET 
-						`key_client`=".$record['key_client']."
+						`key_client`=".$record['key_client'].",
+						`date`='".$record['date']."'
 						WHERE `".$this->getKeyColumn()."`=$key";
 			}
 			else
 			{
 				$sql = "INSERT INTO `".$this->getType()."`(
 					`date`, `key_client`) VALUES(
-					NOW(),
+					'".$record['date']."',
 					".$record['key_client'].")";
 			}
 				
@@ -168,10 +172,13 @@ class Controller_Order extends Controller
 		}
 		$this->model->__set('error', $error);
 		
-		$record['key_'.$this->getType()] = $key;
+		$record['key_order'] = $key;
+		
+		$all_clients = $this->getAllLinks('client', 'full_name');
+		$this->model->__set("all_clients", $all_clients);
 		$this->model->__set('record', $record);
 		
-		$this->view->generate($this->getType().'_edit.html', null, $this);
+		$this->view->generate('order_edit.html', null, $this);
 	}
 	
 	/**

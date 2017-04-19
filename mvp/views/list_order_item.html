@@ -11,7 +11,7 @@
 <a href="/client/delete/?key=567" onclick="return confirm('Точно удалить {какое-то имя клиента}?'); return false;">X</a>
 */
 echo '					';
-echo '<a href="/order/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row['key_order'].'" onclick="return confirm(\'Точно удалить '.$row['key_order'].'?\'); return false;">X</a>
+echo '<a href="/order/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row['key_order'].'" onclick="return confirm(\'Точно удалить '.$row['key_order'].'?\'); return false;"><img src="/images/del.gif" width="24" height="24" /></a>
 ';
 
 

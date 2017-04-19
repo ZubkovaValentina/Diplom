@@ -39,7 +39,7 @@ CREATE TABLE `client` (
 DROP TABLE IF EXISTS `detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `detail` (
+CREATE TABLE `detail` (                                                          
   `key_detail` int(10) NOT NULL AUTO_INCREMENT,
   `name_detail` varchar(255) NOT NULL,
   `manufacturer` varchar(255) NOT NULL,
@@ -104,10 +104,10 @@ DROP TABLE IF EXISTS `my_order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `my_order` (
   `key_order` int(10) NOT NULL AUTO_INCREMENT,
-  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` datetime NULL,
   `key_client` int(10) DEFAULT NULL,
   `accepted` int(10) unsigned DEFAULT NULL,
-  `passed` int(10) unsigned DEFAULT NULL,
+  `passed` int(10) unsigned DEFAULT NULL,                    
   PRIMARY KEY (`key_order`),
   KEY `key_client` (`key_client`),
   KEY `accepted` (`accepted`),
@@ -128,7 +128,7 @@ DROP TABLE IF EXISTS `order_detail`;
 CREATE TABLE `order_detail` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `key_order` int(10) DEFAULT NULL,
-  `key_detail` int(10) DEFAULT NULL,
+  `key_detail` int(10) DEFAULT NULL,                                               
   PRIMARY KEY (`id`),
   KEY `key_order` (`key_order`),
   KEY `key_detail` (`key_detail`),
@@ -166,7 +166,7 @@ DROP TABLE IF EXISTS `order_service`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order_service` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,                                           
   `key_order` int(10) DEFAULT NULL,
   `key_service` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`),

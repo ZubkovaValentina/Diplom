@@ -154,7 +154,7 @@ class Controller_Order extends Controller
 			else
 			{
 				$sql = "INSERT INTO `".$this->getType()."`(
-					``date, `key_client`) VALUES(
+					`date`, `key_client`) VALUES(
 					NOW(),
 					".$record['key_client'].")";
 			}

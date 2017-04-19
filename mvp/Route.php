@@ -1,6 +1,6 @@
 <?php
 
-require_once '../Config.php';
+require_once 'c:\\wamp\Сonfig.php';
 require_once '../log4php/Logger.php';
 
 class Route

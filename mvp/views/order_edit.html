@@ -17,6 +17,8 @@ $all_details = $controller->getModel()->__get('all_details');
 $all_services = $controller->getModel()->__get('all_services');
 $all_employees = $controller->getModel()->__get('all_employees');
 
+$invoices = $controller->getModel()->__get('invoices');
+
 //$is_error = $controller->getModel()->__get('is_error');
 /*
 $all_details = array(
@@ -83,7 +85,7 @@ echo '
 			</table>
 		</form>';
 		
-if($key > 0)
+if($key > 0) /* Если редактирование существующего заказа */
 {
 	echo '
 		
@@ -136,30 +138,37 @@ echo '
 		
 		<div id="invoices">
 			<h3>Накладные:</h3>
-			<form method="GET" action="">
+			
 				<table class="links_list">
 					<tr>
 						<th>Деталь</th>
-						<th>Поставщик></th>
+						<th>Поставщик</th>
 						<th>Кол-во</th>
 						<th>Принял</th>
-					</tr>
-					<tr>
-						<td>Test</td>
-						<td>Какой-то поставщик</td>
-						<td>xxx</td>
-						<td>
-							<select name="employee[]" onchange="this.form.submit()">
-								<option value="0">---</option>';
-foreach($all_employees as $employee)
+					</tr>';
+foreach($invoices as $invoice)
 {
 	echo '
-								<option value="'.$employee['key_employee'].'">'.$employee['full_name'].'</option>';
+					<tr>
+						<td><a href="/detail/edit/?key='.$invoice['invoice']['key_detail'].'">'.$invoice['invoice']['name_detail'].'</a></td>
+						<td><a href="/provider/edit/?key='.$invoice['invoice']['key_provider'].'">'.$invoice['invoice']['name_organization'].'</a></td>
+						<td>'.$invoice['kolvo'].'</td>
+						<td>
+							<form method="GET" action="/order/edit/">
+								<select name="employee['.$invoice['invoice']['key_detail'].']" onchange="this.form.submit()">
+									<option value="0">---</option>';
+	foreach($all_employees as $employee)
+	{
+		echo '
+									<option value="'.$employee['key_employee'].'"';
+		if($employee['key_employee'] === $invoice['invoice']['key_employee']) echo ' selected="selected"';
+		echo '>'.$employee['full_name'].'</option>';
+	}
 }
-	
 echo '
-							</select>
-				
+								</select>
+								<input type="hidden" name="key" value="'.$key.'" />
+							</form>
 						</td>
 					</tr>
 				</table>

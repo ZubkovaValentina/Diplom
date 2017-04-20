@@ -1,5 +1,5 @@
 <?php
-//qqq
+
 require_once 'controllers/Controller.php';
 require_once 'controllers/controller_client.php';
 require_once 'controllers/controller_detail.php';
@@ -57,12 +57,14 @@ class Controller_Order extends Controller
 		/* В запросе указан key — значит это редактирование */
 		if($key)
 		{
-			/* Проверяем GET-запрос - запросы на добавление, удаление деталей в заказ */
+			/* Проверяем GET-запрос — запросы на добавление, удаление деталей в заказ */
 			$is_error = $this->processLink($key, 'detail');
 			
-			/* Проверяем GET-запрос - запросы на добавление, удаление работ в заказ */
+			/* Проверяем GET-запрос — запросы на добавление, удаление работ в заказ */
 			$this->processLink($key, 'service');
 			
+			/* Проверяем GET-запрос — запросы на привязку сотрудника к накладной */
+			$this->processLink($key, 'employee');
 			
 			$this->model->__set("is_edit", true);
 			$sql = "SELECT key_order, DATE(`date`) AS `date`, key_client FROM `".$this->getType()."` WHERE `".$this->getKeyColumn()."`=".$key;
@@ -103,8 +105,51 @@ class Controller_Order extends Controller
 			$this->model->__set("service_sum", $service_sum);
 			$this->model->__set("services", $services);
 			
-			
+			/*
+			[key_detail => ['kolvo' => kolvo, 'invoice' => invoice]]
+			Сюда складируем детали (уникальные. Если деталь уже есть в этом массиве, 
+			то увеличиваем kolvo на единицу. Иначе добавляем новую запись.
+			*/
 			$invoices = array();
+			$sql = '
+SELECT
+	od.id AS id,
+	d.key_detail AS key_detail,
+	d.name_detail AS name_detail,
+	p.key_provider AS key_provider,
+	p.name_organization AS name_organization,
+	e.key_employee AS key_employee,
+	e.full_name AS full_name
+FROM order_detail AS od
+	LEFT JOIN detail AS d ON d.key_detail=od.key_detail
+	LEFT JOIN provider AS p ON p.key_provider=d.key_provider
+	LEFT JOIN employee AS e ON e.key_employee=od.key_employee
+WHERE od.key_order='.$key;
+
+			if($result = $this->db->query($sql))
+			{
+				/* извлечение ассоциативного массива */
+				while($row = $result->fetch_assoc())
+				{
+					$key_detail = $row['key_detail'];
+					if(isset($invoices[$key_detail])) $invoices[$key_detail]['kolvo']++;
+					else
+					{
+						$invoices[$key_detail] = array();
+						$invoices[$key_detail]['kolvo'] = 1;
+						$invoices[$key_detail]['invoice'] = $row;
+					}
+				}
+			
+				/* удаление выборки */
+				$result->free();
+			}
+			else
+			{
+				$this->log->error("Ошибка SQL: ".$this->db->error.' '.$sql);
+				return null;
+			}
+
 			$this->model->__set("invoices", $invoices);
 			
 			
@@ -198,13 +243,34 @@ class Controller_Order extends Controller
 	function processLink($key, $link)
 	{
 		$key_link = 0;
-		if(isset($_GET[$link]) and $_GET[$link][0] != 0)
+		if(isset($_GET[$link]))
 		{
-			$key_link = $_GET[$link][0];
-			$sign = '-';
-			if($_GET['action'] == 'add') $sql = "
+			/* Привязка сотрудника к накладной */
+			if($link === 'employee')
+			{
+				foreach(array_keys($_GET[$link]) as $key_detail)
+				{
+					$key_employee = $_GET[$link][$key_detail];
+					if($key_employee == 0) $key_employee = 'NULL';
+					$sql = "
+UPDATE order_detail SET key_employee=$key_employee WHERE 
+	key_detail=$key_detail AND 
+	key_order=".$key;
+					if(!$this->db->query($sql))
+					{
+						$this->log->error("Ошибка SQL: ".$this->db->error.' '.$sql);
+					}
+				}
+				header('Location: /order/edit/?key='.$key);
+				exit(0);
+			}
+			else if($_GET[$link][0] != 0)
+			{
+				$key_link = $_GET[$link][0];
+				$sign = '-';
+				if($_GET['action'] == 'add') $sql = "
 INSERT INTO order_$link(key_order, key_$link) VALUES(".$key.", ".$key_link.")";
-
+			}
 		}
 		else if(isset($_GET["del_$link"]) and $_GET["del_$link"] != 0)
 		{

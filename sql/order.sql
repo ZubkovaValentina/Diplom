@@ -9,9 +9,10 @@ CREATE TABLE `order_detail` (
 	`id` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`key_order` INT(10),
 	`key_detail` INT(10),
-	`key_employee` INT(10),
+	`key_employee` INT(10) UNSIGNED,
 	FOREIGN KEY (`key_order`) REFERENCES my_order(`key_order`) ON DELETE SET NULL,
-	FOREIGN KEY (`key_detail`) REFERENCES `detail`(`key_detail`) ON DELETE SET NULL
+	FOREIGN KEY (`key_detail`) REFERENCES `detail`(`key_detail`) ON DELETE SET NULL,
+	FOREIGN KEY (`key_employee`) REFERENCES `employee`(`key_employee`) ON DELETE SET NULL
 );
 
 CREATE TABLE `order_service` (

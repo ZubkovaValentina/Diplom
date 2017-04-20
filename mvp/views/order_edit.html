@@ -15,6 +15,7 @@ $services = $controller->getModel()->__get('services');
 $all_clients = $controller->getModel()->__get('all_clients');
 $all_details = $controller->getModel()->__get('all_details');
 $all_services = $controller->getModel()->__get('all_services');
+$all_employees = $controller->getModel()->__get('all_employees');
 
 //$is_error = $controller->getModel()->__get('is_error');
 /*
@@ -86,8 +87,8 @@ if($key > 0)
 {
 	echo '
 		
+		<hr />
 		<div id="details">
-			<hr />
 			<h3>Детали в заказе:</h3>
 			<table class="links_list">
 				<tr>
@@ -133,15 +134,38 @@ echo '
 			</form>
 		</div>
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		<div id="invoices">
+			<h3>Накладные:</h3>
+			<form method="GET" action="">
+				<table class="links_list">
+					<tr>
+						<th>Деталь</th>
+						<th>Поставщик></th>
+						<th>Кол-во</th>
+						<th>Принял</th>
+					</tr>
+					<tr>
+						<td>Test</td>
+						<td>Какой-то поставщик</td>
+						<td>xxx</td>
+						<td>
+							<select name="employee[]" onchange="this.form.submit()">
+								<option value="0">---</option>';
+foreach($all_employees as $employee)
+{
+	echo '
+								<option value="'.$employee['key_employee'].'">'.$employee['full_name'].'</option>';
+}
+	
+echo '
+							</select>
+				
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	
 		
 		<div id="services">
 			<hr />

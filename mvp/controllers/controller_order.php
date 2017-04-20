@@ -102,6 +102,12 @@ class Controller_Order extends Controller
 			
 			$this->model->__set("service_sum", $service_sum);
 			$this->model->__set("services", $services);
+			
+			
+			$invoices = array();
+			$this->model->__set("invoices", $invoices);
+			
+			
 		}
 		else
 		{
@@ -115,10 +121,14 @@ class Controller_Order extends Controller
 		$all_clients = $this->getAllLinks('client', 'full_name');
 		$all_details =  $this->getAllLinks('detail', 'name_detail');
 		$all_services = $this->getAllLinks('service', 'name_service');
+		$all_employees = $this->getAllLinks('employee', 'full_name');
 		
 		$this->model->__set("all_clients", $all_clients);
 		$this->model->__set("all_details", $all_details);
 		$this->model->__set("all_services", $all_services);
+		
+		$this->model->__set("all_employees", $all_employees);
+		
 //		$this->model->__set("is_error", $is_error);
 		
 		$this->view->generate('order_edit.html', null, $this);

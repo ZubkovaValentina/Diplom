@@ -11,7 +11,7 @@
 <a href="/client/delete/?key=567" onclick="return confirm('Точно удалить {какое-то имя клиента}?'); return false;">X</a>
 */
 echo '					';
-echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row['key_detail'].'" onclick="return confirm(\'Точно удалить '.$row['name_detail'].'?\'); return false;">X</a>
+echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_DELETE.'/?'.Controller::PARAM_KEY.'='.$row['key_detail'].'" onclick="return confirm(\'Точно удалить '.$row['name_detail'].'?\'); return false;"><img src="/images/del.gif" width="16" height="16" /></a>
 ';
 
 
@@ -37,12 +37,12 @@ echo '<a href="/'.$controller->getType().'/'.Controller::ACTION_EDIT.'/?'.Contro
 
 ?>
 				</td>
-				<td>
+				<td class="price">
 <?php
 echo $row['kolvo'];
 ?>
 				</td>
-				<td>
+				<td class="price">
 <?php
 echo $row['price'];
 ?>

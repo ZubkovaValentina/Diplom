@@ -84,9 +84,16 @@ h1 {padding-top:16px;}
 	clear:both;
 }
 
+table#list
+{
+	margin-bottom: 10px;
+	border-collapse: collapse; /* Убираем двойные линии между ячейками */
+}
+
 table#list td, table#list th
 {
 	padding: 5px; /* Поля вокруг содержимого таблицы */
+    border: 1px solid black; /* Параметры рамки */
 }
 
 .error
@@ -122,4 +129,14 @@ table.links_list th
 .itogo
 {
 	font-weight: bold;
+}
+
+.add_btn
+{
+	background: url(/images/add.png) no-repeat;
+}
+
+.save_btn
+{
+	background: url(/images/save.png) no-repeat;
 }

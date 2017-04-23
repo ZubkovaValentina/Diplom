@@ -22,8 +22,32 @@ h1 {padding-top:16px;}
 	background-color: #ffff00;
 	clear:both;
 	width:100%;
-	padding:16px 0 16px 0;
+/*	padding:16px 0 16px 0; */
 	text-align:center;
+	line-height: 80px;
+}
+
+#logo
+{
+	clear:none;
+	float:left;
+	width:10%;
+	vertical-align: middle;
+	background-color:#ffff00;
+}
+
+#logo img
+{
+	vertical-align: middle;
+}
+
+#menu
+{
+	clear:none;
+	float:left;
+	width:90%;
+	background-color:#ffff00;
+	vertical-align: middle;
 }
 
 #tabs span

@@ -7,22 +7,17 @@
 	</head>
 	<body>
 		<div id="tabs">
-			<span><a href="/">Главная</a></span>
-			<span><a href="/client/">Информация о клиенте</a></span>
-			<span><a href="/employee/">Информация о сотруднике</a></span>
-			<span><a href="/provider/">Информация о поставщике</a></span>
-			<span><a href="/detail/">Детали</a></span>
-			<span><a href="/service/">Виды работ</a></span>
-			<span><a href="/order/">Заказы</a></span>
-			<span><a href="/bill/">Счета</a></span>
-			<!--
-			<div><a href="/payment_order.html">Платежные поручения</a></div>
-			<div><a href="/couple_goods.html">Счет</a></div>
-			
-			<div><a href="/invoice/">Накладная</a></div>
-			-->
+			<div id="logo"><a href="/"><img src="/images/logo.png" width="48" height="48" alt="Диплом «Диспетчер»" /></a></div>
+			<div id="menu">
+				<span><a href="/client/">Информация о клиенте</a></span>
+				<span><a href="/employee/">Информация о сотруднике</a></span>
+				<span><a href="/provider/">Информация о поставщике</a></span>
+				<span><a href="/detail/">Детали</a></span>
+				<span><a href="/service/">Виды работ</a></span>
+				<span><a href="/order/">Заказы</a></span>
+				<span><a href="/bill/">Счета</a></span>
+			</div>
 		</div>
-		
 		
 <?php		
 $sql = "SELECT `key_employee`, `full_name` FROM `employee` WHERE DAY(`birthday`) = DAY(CURDATE()) AND MONTH(`birthday`) = MONTH(CURDATE())";

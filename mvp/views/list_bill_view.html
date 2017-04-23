@@ -1,0 +1,13 @@
+		<table id="list">
+			<tr>
+				<th>Номер счета</th>
+				<th>Дата</th>
+				<th>Клиент</th>
+			</tr>
+<?php
+
+
+foreach($controller->getModel()->__get('list') as $row) include "list_bill_item.html";
+
+?>
+		</table>

@@ -17,12 +17,28 @@ h1 {padding-top:16px;}
 	color:red;
 }
 
-#tabs div 
+#tabs
 {
-	padding:0 16px 0 0;
-	float:left;
-	clear:none;
+	background-color: #ffff00;
+	clear:both;
+	width:100%;
+	padding:16px 0 16px 0;
+	text-align:center;
 }
+
+#tabs span
+{
+	padding:0 16px 0 16px;
+}
+
+#tabs span a
+{
+	/*
+	color: white;
+	*/
+	font-weight: bold;
+}
+
 #list div
 {
 	
@@ -74,3 +90,12 @@ table.links_list th
 	background: #b0e0e6; /* Цвет фона */
 }
 
+.price
+{
+	text-align: right;
+}
+
+.itogo
+{
+	font-weight: bold;
+}

@@ -1,0 +1,84 @@
+<?php
+
+$is_edit = $controller->getModel()->__get('is_edit');
+
+$key = $controller->getModel()->__get('record')['key_order'];
+$date = $controller->getModel()->__get('record')['date'];
+$key_client = $controller->getModel()->__get('record')['key_client'];
+$name_client = $controller->getModel()->__get('record')['full_name'];
+
+$detail_sum = $controller->getModel()->__get('detail_sum');
+$details = $controller->getModel()->__get('details');
+
+$service_sum = $controller->getModel()->__get('service_sum');
+$services = $controller->getModel()->__get('services');
+
+echo '
+		<br />
+		<h3>Чек клиента</h3>
+		<table td="tab">
+			<tr>
+				<td class="tab_name">Номер заказа</td>
+				<td>'.$key.'</td>
+			</tr>
+			<tr>
+				<td class="tab_name">Дата (\'гггг-мм-дд\')</td>
+				<td>'.$date.'</td>
+			</tr>
+			<tr>
+				<td class="tab_name">Клиент</td>
+				<td><a href="/client/edit/?key='.$key_client.'">'.$name_client.'</a></td>
+			</tr>
+			<tr>
+				<td class="tab_name itog">Общая сумма заказа:</td>
+				<td class="tab_name itog">'.($detail_sum+$service_sum).' руб.</td>
+			</tr>
+		</table>
+		<hr />
+		<div id="details">
+			<h3>Детали в заказе:</h3>
+			<table class="links_list">
+				<tr>
+					<th>Деталь</th>
+					<th>Цена, руб.</th>
+				</tr>';
+foreach($details as $detail)
+{
+	echo '
+				<tr>
+					<td>'.$detail['name_detail'].'</td>
+					<td class="price">'.$detail['price'].'</td>
+				</tr>';
+}
+echo '
+				<tr class="itogo">
+					<td>Итого:</td>
+					<td class="price">'.$detail_sum.'</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id="services">
+			<hr />
+			<h3>Список работ:</h3>
+			<table class="links_list">
+				<tr>
+					<th>Вид работы:</th>
+					<th>Цена, руб.</th>
+				</tr>';
+foreach($services as $service)
+{
+	echo '
+				<tr>
+					<td>'.$service['name_service'].'</td>
+					<td class="price">'.$service['price'].'</td>
+				</tr>';
+}
+echo '
+				<tr class="itogo">
+					<td>Итого:</td>
+					<td class="price">'.$service_sum.'</td>
+				</tr>
+			</table>
+		</div>';
+

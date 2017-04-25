@@ -53,6 +53,7 @@ abstract class Controller
 			exit();
 		}
 		$this->log->debug("Test logger message");
+		$this->db->query("SET NAMES 'utf8'");
 	}
 
 	function __destruct()

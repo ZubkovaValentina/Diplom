@@ -105,7 +105,11 @@ class Controller_Client extends Controller
 					".$record['mobile_phone'].",
 					".$record['series_p'].")";
 			}
-				
+			
+			echo $sql.' <br />';
+			echo "key=$key";
+			exit(0);
+			
 			$this->log->debug("update SQL: $sql");
 			$this->db->query($sql);
 			/* Редирект на список текущего типа {my_type} */

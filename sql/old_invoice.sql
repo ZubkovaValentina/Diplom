@@ -43,3 +43,14 @@ FROM order_detail AS od
 	LEFT JOIN provider AS p ON p.key_provider=d.key_provider
 	LEFT JOIN employee AS e ON e.key_employee=od.key_employee
 WHERE od.key_order=3;
+
+
+
+`key_employee` int(10) unsigned DEFAULT NULL,
+  CONSTRAINT `order_detail_ibfk_3` FOREIGN KEY (`key_employee`) REFERENCES `employee` (`key_employee`) ON DELETE SET NULL
+
+ALTER TABLE qqq ADD COLUMN `key_employee` int(10) unsigned DEFAULT NULL,
+ADD CONSTRAINT `order_detail_ibfk_3` FOREIGN KEY (`key_employee`) REFERENCES `employee` (`key_employee`) ON DELETE SET NULL
+
+ALTER TABLE order_detail ADD COLUMN `key_employee` int(10) unsigned DEFAULT NULL;
+ALTER TABLE order_detail ADD CONSTRAINT `order_detail_ibfk_5` FOREIGN KEY (`key_employee`) REFERENCES `employee` (`key_employee`) ON DELETE SET NULL;

@@ -107,17 +107,15 @@ class Controller_Client extends Controller
 			}
 			
 			//header('Content-Type: text/html; charset=utf-8');
-			echo $sql.' <br />';
 			
 			$this->log->debug("update SQL: $sql");
 			$result = $this->db->query($sql);
 			if(!$result)
 			{
 				echo "Ошибка SQL: ".$this->db->error;
-				
+				exit(0);
 			}
-			else echo "OK!";
-			exit(0);
+			
 			/* Редирект на список текущего типа {my_type} */
 			header('Location: /'.$this->getType().'/');
 			exit(0);

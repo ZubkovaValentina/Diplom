@@ -106,6 +106,7 @@ class Controller_Client extends Controller
 					".$record['series_p'].")";
 			}
 			
+			header('Content-Type: text/html; charset=utf-8');
 			echo $sql.' <br />';
 			
 			$this->log->debug("update SQL: $sql");

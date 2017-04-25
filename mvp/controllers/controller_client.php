@@ -107,11 +107,16 @@ class Controller_Client extends Controller
 			}
 			
 			echo $sql.' <br />';
-			echo "key=$key";
-			exit(0);
 			
 			$this->log->debug("update SQL: $sql");
-			$this->db->query($sql);
+			$result = $this->db->query($sql);
+			if(!$result)
+			{
+				echo "Ошибка SQL: ".$this->db->error;
+				
+			}
+			else echo "OK!";
+			exit(0);
 			/* Редирект на список текущего типа {my_type} */
 			header('Location: /'.$this->getType().'/');
 			exit(0);
